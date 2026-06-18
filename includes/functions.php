@@ -98,21 +98,51 @@ function get_carousel_slides(): array {
     return fetchAll('SELECT * FROM carousel_slides WHERE is_active = 1 ORDER BY sort_order');
 }
 
-// ── Influencers ───────────────────────────────────────────────────────────────
-function get_featured_influencers(int $limit = 3): array {
+// ── Services ─────────────────────────────────────────────────────────────────
+function get_services(bool $active_only = true): array {
+    if ($active_only) {
+        return fetchAll("SELECT * FROM services WHERE status='active' ORDER BY sort_order, id");
+    }
+    return fetchAll('SELECT * FROM services ORDER BY sort_order, id');
+}
+function get_featured_services(int $limit = 4): array {
     return fetchAll(
-        'SELECT * FROM influencers WHERE is_featured = 1 AND is_active = 1 ORDER BY sort_order LIMIT ?',
+        "SELECT * FROM services WHERE is_featured=1 AND status='active' ORDER BY sort_order LIMIT ?",
         'i', $limit
     );
 }
-function get_influencers(): array {
-    return fetchAll('SELECT * FROM influencers WHERE is_active = 1 ORDER BY sort_order');
+function get_service_by_slug(string $slug): ?array {
+    $r = fetchOne("SELECT * FROM services WHERE slug=? AND status='active'", 's', $slug);
+    return $r ?: null;
 }
-function influencer_img(array $inf): string {
-    if (!empty($inf['image']) && file_exists(__DIR__ . '/../uploads/influencers/' . $inf['image'])) {
-        return BASE_URL . '/uploads/influencers/' . $inf['image'];
+function service_img(array $svc): string {
+    if (!empty($svc['image']) && file_exists(__DIR__ . '/../uploads/services/' . $svc['image'])) {
+        return BASE_URL . '/uploads/services/' . $svc['image'];
     }
-    return BASE_URL . '/assets/images/no-image.png';
+    return '';
+}
+function service_icon_svg(string $icon, int $size = 28): string {
+    $paths = [
+        'shopping_bag' => 'M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0',
+        'briefcase'    => 'M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2M12 12v4M10 14h4',
+        'gift'         => 'M20 12v10H4V12M22 7H2v5h20V7zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z',
+        'truck'        => 'M1 3h15v13H1zM16 8h4l3 3v5h-7V8zM5.5 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM18.5 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z',
+        'settings'     => 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z',
+        'shield'       => 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z',
+        'star'         => 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z',
+        'heart'        => 'M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z',
+    ];
+    $d = $paths[$icon] ?? $paths['star'];
+    return '<svg width="'.$size.'" height="'.$size.'" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="'.$d.'"/></svg>';
+}
+function service_features(array $svc): array {
+    if (empty($svc['features'])) return [];
+    return array_filter(array_map('trim', explode("\n", $svc['features'])));
+}
+function slugify(string $text): string {
+    $text = strtolower(trim($text));
+    $text = preg_replace('/[^a-z0-9\s-]/', '', $text);
+    return preg_replace('/[\s-]+/', '-', $text);
 }
 function carousel_img(array $slide): string {
     if (!empty($slide['image']) && file_exists(__DIR__ . '/../uploads/carousel/' . $slide['image'])) {

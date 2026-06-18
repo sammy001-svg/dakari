@@ -12,9 +12,11 @@ config/database.php
 uploads/products/*
 uploads/carousel/*
 uploads/influencers/*
+uploads/services/*
 !uploads/products/.gitkeep
 !uploads/carousel/.gitkeep
 !uploads/influencers/.gitkeep
+!uploads/services/.gitkeep
 
 # OS artefacts
 .DS_Store

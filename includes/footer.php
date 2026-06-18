@@ -51,7 +51,7 @@ $categories = get_categories();
                 <h4 class="footer__heading">Company</h4>
                 <ul class="footer__links">
                     <li><a href="<?= BASE_URL ?>/about.php">About Us</a></li>
-                    <li><a href="<?= BASE_URL ?>/influencers.php">Brand Ambassadors</a></li>
+                    <li><a href="<?= BASE_URL ?>/services.php">Our Services</a></li>
                     <li><a href="<?= BASE_URL ?>/contact.php">Contact Us</a></li>
                     <li><a href="#">Careers</a></li>
                     <li><a href="#">Press &amp; Media</a></li>

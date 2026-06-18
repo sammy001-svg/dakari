@@ -423,27 +423,57 @@ h1, h2, h3, h4, h5 { font-family: var(--font-serif); line-height: 1.2; }
 .why-card__stat span { display: block; font-family: var(--font-serif); font-size: 2.2rem; color: var(--gold); font-weight: 700; line-height: 1; margin-bottom: 4px; }
 .why-card__stat small { font-size: .78rem; color: rgba(255,255,255,.6); text-transform: uppercase; letter-spacing: .07em; }
 
-/* ── Influencer Section ─────────────────────────────────────── */
-.influencer-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 28px;
+/* ── Home Services Section ──────────────────────────────────── */
+.home-services-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px;
 }
-.influencer-card {
+.home-service-card {
     background: var(--white); border: 1px solid var(--border);
-    border-radius: var(--radius-lg); overflow: hidden; transition: var(--transition);
+    border-radius: var(--radius-lg); padding: 28px 24px 24px;
+    display: flex; flex-direction: column; transition: var(--transition);
 }
-.influencer-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
-.influencer-card__image { aspect-ratio: 1; overflow: hidden; background: var(--light); }
-.influencer-card__image img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
-.influencer-card:hover .influencer-card__image img { transform: scale(1.05); }
-.influencer-card__body { padding: 22px 20px; }
-.influencer-card__name { font-family: var(--font-serif); font-size: 1.2rem; color: var(--green); margin-bottom: 4px; }
-.influencer-card__title { font-size: .75rem; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 10px; }
-.influencer-card__bio { font-size: .865rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 14px; }
-.influencer-card__followers { font-size: .8rem; color: var(--text-light); }
-.influencer-card__followers strong { color: var(--green); }
-.influencer-social { display: flex; gap: 10px; }
-.influencer-social a { color: var(--text-muted); transition: var(--transition); }
-.influencer-social a:hover { color: var(--gold); }
+.home-service-card:hover { box-shadow: var(--shadow-md); transform: translateY(-4px); border-color: var(--green); }
+.home-service-card__icon {
+    width: 56px; height: 56px; background: var(--green); border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: center; color: var(--gold);
+    margin-bottom: 18px; flex-shrink: 0;
+}
+.home-service-card__title { font-family: var(--font-serif); font-size: 1.1rem; color: var(--green); margin-bottom: 6px; }
+.home-service-card__tagline { font-size: .85rem; color: var(--gold); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 14px; }
+.home-service-card__features { list-style: none; padding: 0; margin: 0 0 auto; display: flex; flex-direction: column; gap: 7px; }
+.home-service-card__features li { font-size: .82rem; color: var(--text-muted); display: flex; align-items: flex-start; gap: 7px; }
+.home-service-card__features li svg { flex-shrink: 0; color: var(--green); margin-top: 2px; }
+.home-service-card__link {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 20px;
+    font-size: .83rem; font-weight: 600; color: var(--green); text-transform: uppercase;
+    letter-spacing: .07em; transition: var(--transition);
+}
+.home-service-card__link:hover { color: var(--gold); gap: 10px; }
+
+/* ── Services Page ──────────────────────────────────────────── */
+.services-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 28px;
+}
+.service-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); overflow: hidden; display: flex;
+    flex-direction: column; transition: var(--transition);
+}
+.service-card:hover { box-shadow: var(--shadow-md); transform: translateY(-4px); }
+.service-card__icon-wrap {
+    background: var(--green); padding: 28px 28px 20px;
+    display: flex; align-items: center; gap: 16px; color: var(--gold);
+}
+.service-card__icon-wrap svg { flex-shrink: 0; }
+.service-card__body { padding: 24px 28px; flex: 1; display: flex; flex-direction: column; }
+.service-card__title { font-family: var(--font-serif); font-size: 1.25rem; color: var(--green); margin-bottom: 6px; }
+.service-card__tagline { font-size: .8rem; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 14px; }
+.service-card__desc { font-size: .9rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 18px; }
+.service-card__features { list-style: none; padding: 0; margin: 0 0 auto; display: flex; flex-direction: column; gap: 8px; }
+.service-card__features li { font-size: .85rem; color: var(--text-muted); display: flex; align-items: flex-start; gap: 8px; }
+.service-card__features li svg { flex-shrink: 0; color: var(--green); margin-top: 2px; }
+.service-card__footer { padding: 18px 28px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.service-card__price { font-size: .8rem; color: var(--text-muted); font-style: italic; }
 
 /* ── Newsletter ─────────────────────────────────────────────── */
 .newsletter-section { background: var(--off-white); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 72px 0; }

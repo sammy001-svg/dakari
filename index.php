@@ -5,7 +5,7 @@ $active_page  = 'home';
 $slides       = get_carousel_slides();
 $featured     = get_featured_products(8);
 $new_arrivals = get_new_products(4);
-$influencers  = get_featured_influencers(3);
+$home_services = get_featured_services(4);
 $categories   = get_categories();
 include __DIR__ . '/includes/header.php';
 ?>
@@ -318,41 +318,40 @@ include __DIR__ . '/includes/header.php';
     </div>
 </section>
 
-<!-- ── Influencers ────────────────────────────────────────────────────────── -->
-<?php if (!empty($influencers)): ?>
+<!-- ── Our Services ──────────────────────────────────────────────────────── -->
+<?php if (!empty($home_services)): ?>
 <section class="section section--alt">
     <div class="container">
         <div class="section__header section__header--center">
-            <p class="section-eyebrow">Brand Ambassadors</p>
-            <h2 class="section-title">Trusted by <span class="gold-accent">Influencers</span></h2>
-            <p class="section-subtitle">Style icons who authentically represent the Dakari lifestyle</p>
+            <p class="section-eyebrow">What We Offer</p>
+            <h2 class="section-title">Our <span class="gold-accent">Services</span></h2>
+            <p class="section-subtitle">Beyond great products — a complete premium experience from consultation to delivery</p>
         </div>
-        <div class="influencer-grid">
-            <?php foreach ($influencers as $inf): ?>
-            <div class="influencer-card">
-                <div class="influencer-card__image">
-                    <img src="<?= influencer_img($inf) ?>" alt="<?= e($inf['name']) ?>" loading="lazy">
+        <div class="home-services-grid">
+            <?php foreach ($home_services as $svc): ?>
+            <div class="home-service-card">
+                <div class="home-service-card__icon">
+                    <?= service_icon_svg($svc['icon'] ?? 'star', 30) ?>
                 </div>
-                <div class="influencer-card__body">
-                    <h3 class="influencer-card__name"><?= e($inf['name']) ?></h3>
-                    <p class="influencer-card__title"><?= e($inf['title']) ?></p>
-                    <p class="influencer-card__bio"><?= e($inf['bio']) ?></p>
-                    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
-                        <p class="influencer-card__followers"><strong><?= e($inf['followers_count']) ?></strong> followers</p>
-                        <div class="influencer-social">
-                            <?php if (!empty($inf['instagram_url'])): ?>
-                            <a href="<?= e($inf['instagram_url']) ?>" target="_blank" rel="noopener" aria-label="Instagram">
-                                <svg width="17" height="17" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                            </a>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
+                <h3 class="home-service-card__title"><?= e($svc['title']) ?></h3>
+                <p class="home-service-card__tagline"><?= e($svc['tagline']) ?></p>
+                <?php $features = array_slice(service_features($svc), 0, 3); ?>
+                <?php if ($features): ?>
+                <ul class="home-service-card__features">
+                    <?php foreach ($features as $f): ?>
+                    <li><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg><?= e($f) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+                <?php endif; ?>
+                <a href="<?= BASE_URL ?>/services.php#<?= e($svc['slug']) ?>" class="home-service-card__link">
+                    <?= e($svc['cta_text'] ?: 'Learn More') ?>
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
             </div>
             <?php endforeach; ?>
         </div>
-        <div style="text-align:center;margin-top:40px">
-            <a href="influencers.php" class="btn btn-outline-green">Meet All Ambassadors</a>
+        <div style="text-align:center;margin-top:44px">
+            <a href="<?= BASE_URL ?>/services.php" class="btn btn-outline-green">View All Services</a>
         </div>
     </div>
 </section>

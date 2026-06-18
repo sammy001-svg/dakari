@@ -52,9 +52,9 @@
         </a>
 
         <div class="sidebar-section">Content</div>
-        <a href="<?= BASE_URL ?>/admin/influencers.php" class="sidebar-link <?= ($admin_active ?? '') === 'influencers' ? 'active' : '' ?>">
-            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            Influencers
+        <a href="<?= BASE_URL ?>/admin/services.php" class="sidebar-link <?= ($admin_active ?? '') === 'services' ? 'active' : '' ?>">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/></svg>
+            Services
         </a>
         <a href="<?= BASE_URL ?>/admin/carousel.php" class="sidebar-link <?= ($admin_active ?? '') === 'carousel' ? 'active' : '' ?>">
             <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="10" rx="2"/><path d="M7 2l-5 5m5 10l-5 5M17 2l5 5m-5 10 5 5"/></svg>

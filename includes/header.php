@@ -102,7 +102,7 @@ $cur_user   = current_user();
                     </div>
                 </li>
 
-                <li><a href="<?= BASE_URL ?>/influencers.php" class="nav__link <?= ($active_page ?? '') === 'influencers' ? 'active' : '' ?>">Influencers</a></li>
+                <li><a href="<?= BASE_URL ?>/services.php" class="nav__link <?= ($active_page ?? '') === 'services' ? 'active' : '' ?>">Services</a></li>
                 <li><a href="<?= BASE_URL ?>/about.php" class="nav__link <?= ($active_page ?? '') === 'about' ? 'active' : '' ?>">About</a></li>
                 <li><a href="<?= BASE_URL ?>/contact.php" class="nav__link <?= ($active_page ?? '') === 'contact' ? 'active' : '' ?>">Contact</a></li>
             </ul>
