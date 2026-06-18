@@ -39,7 +39,9 @@ body { font-family: var(--font-sans); color: var(--text); background: var(--off-
 .sidebar-brand {
     padding: 22px 20px; border-bottom: 1px solid rgba(255,255,255,.1);
 }
-.sidebar-brand__logo { font-family: var(--font-serif); font-size: 1.4rem; color: var(--gold); display: block; margin-bottom: 2px; }
+.sidebar-brand__logo-link { display: block; margin-bottom: 6px; }
+.sidebar-logo-wrap { background: var(--white); border-radius: var(--radius); padding: 6px 12px; display: inline-block; }
+.sidebar-logo-img { height: 32px; width: auto; display: block; }
 .sidebar-brand__sub { font-size: .7rem; color: rgba(255,255,255,.45); text-transform: uppercase; letter-spacing: .08em; }
 .sidebar-nav { flex: 1; padding: 12px 0; }
 .sidebar-section { padding: 12px 20px 4px; font-size: .65rem; color: rgba(255,255,255,.3); text-transform: uppercase; letter-spacing: .1em; }

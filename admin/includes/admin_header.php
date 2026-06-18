@@ -13,7 +13,11 @@
 <!-- Sidebar -->
 <aside class="admin-sidebar" id="adminSidebar">
     <div class="sidebar-brand">
-        <a href="<?= BASE_URL ?>/admin/index.php" class="sidebar-brand__logo">Dakari</a>
+        <a href="<?= BASE_URL ?>/admin/index.php" class="sidebar-brand__logo-link">
+            <div class="sidebar-logo-wrap">
+                <img src="<?= BASE_URL ?>/assets/images/logo.png" alt="Dakari" class="sidebar-logo-img">
+            </div>
+        </a>
         <span class="sidebar-brand__sub">Admin Panel</span>
     </div>
     <nav class="sidebar-nav">

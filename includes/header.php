@@ -55,11 +55,7 @@ $cur_user   = current_user();
 
         <!-- Logo -->
         <a href="<?= BASE_URL ?>/" class="logo">
-            <div class="logo__emblem">D</div>
-            <div class="logo__text">
-                <span class="logo__name"><?= e($site_name) ?></span>
-                <span class="logo__tagline"><?= e(setting('site_tagline', 'Premium Collection')) ?></span>
-            </div>
+            <img src="<?= BASE_URL ?>/assets/images/logo.png" alt="<?= e($site_name) ?>" class="logo__img">
         </a>
 
         <!-- Nav -->
