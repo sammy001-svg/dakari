@@ -6,6 +6,8 @@
     <title><?= e($admin_page_title ?? 'Admin') ?> — Dakari Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/jpeg" href="<?= BASE_URL ?>/assets/images/favicon.jpg">
+    <link rel="apple-touch-icon" href="<?= BASE_URL ?>/assets/images/favicon.jpg">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin.css">
 </head>
 <body>
