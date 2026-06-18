@@ -1,0 +1,30 @@
+# Database credentials — never commit
+config/database.php
+
+# IDE / editor settings
+.claude/
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# User-uploaded content (keep folder structure, not contents)
+uploads/products/*
+uploads/carousel/*
+uploads/influencers/*
+!uploads/products/.gitkeep
+!uploads/carousel/.gitkeep
+!uploads/influencers/.gitkeep
+
+# OS artefacts
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# PHP error logs
+*.log
+error_log
+
+# Composer (if added later)
+vendor/
+composer.lock

@@ -1,0 +1,34 @@
+/* ============================================================
+   DAKARI — Client Portal Stylesheet
+   No gradients.
+   ============================================================ */
+.client-layout { display: grid; grid-template-columns: 240px 1fr; gap: 32px; padding: 40px 0 60px; min-height: 70vh; }
+.client-sidebar { }
+.client-nav { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+.client-nav__user { background: var(--green); padding: 22px 20px; }
+.client-nav__avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--gold); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; font-family: var(--font-serif); }
+.client-nav__name { color: var(--white); font-weight: 600; font-size: .95rem; }
+.client-nav__email { color: rgba(255,255,255,.6); font-size: .8rem; }
+.client-nav__links { padding: 8px 0; }
+.client-nav__link { display: flex; align-items: center; gap: 10px; padding: 11px 20px; color: var(--text); font-size: .88rem; transition: var(--transition); border-left: 3px solid transparent; }
+.client-nav__link svg { color: var(--text-muted); flex-shrink: 0; }
+.client-nav__link:hover { background: var(--off-white); color: var(--green); border-left-color: var(--green); }
+.client-nav__link.active { background: var(--off-white); color: var(--green); border-left-color: var(--gold); font-weight: 600; }
+.client-nav__link.active svg { color: var(--gold); }
+
+.client-content { }
+.client-page-title { font-family: var(--font-serif); font-size: 1.5rem; color: var(--green); margin-bottom: 24px; }
+
+.stat-mini-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+.stat-mini { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; text-align: center; }
+.stat-mini__val { font-family: var(--font-serif); font-size: 1.6rem; font-weight: 700; color: var(--green); display: block; }
+.stat-mini__label { font-size: .78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; margin-top: 4px; }
+
+@media (max-width: 768px) {
+    .client-layout { grid-template-columns: 1fr; }
+    .client-sidebar { order: -1; }
+    .stat-mini-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 480px) {
+    .stat-mini-grid { grid-template-columns: 1fr; }
+}
