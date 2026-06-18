@@ -97,11 +97,25 @@ h1, h2, h3, h4, h5 { font-family: var(--font-serif); line-height: 1.2; }
     background: var(--white); border-bottom: 1px solid var(--border);
     box-shadow: 0 2px 20px rgba(0,0,0,.06);
 }
-.header__inner { display: flex; align-items: center; justify-content: space-between; height: 90px; }
+.header__inner { display: flex; align-items: center; justify-content: space-between; height: 84px; }
 
-/* Logo */
+/* Logo — header
+   Image is 1667×1667 with ~29% white space top & bottom.
+   Crop wrapper clips to the logo content only.
+   Formula: img-height = visible / 0.43 = 144px → margin-top = -144 × 0.29 = -42px */
 .logo { display: flex; align-items: center; }
-.logo__img { height: 72px; width: auto; display: block; }
+.logo__crop {
+    height: 62px;
+    overflow: hidden;
+    line-height: 0;
+    flex-shrink: 0;
+}
+.logo__img {
+    height: 144px;
+    width: auto;
+    display: block;
+    margin-top: -42px;
+}
 
 /* Nav */
 .nav__list { display: flex; align-items: center; gap: 2px; }
@@ -452,9 +466,12 @@ h1, h2, h3, h4, h5 { font-family: var(--font-serif); line-height: 1.2; }
 .footer__col--brand .footer__logo { margin-bottom: 16px; }
 .footer__logo-img-wrap {
     display: inline-block; background: var(--white);
-    border-radius: var(--radius-lg); padding: 10px 20px;
+    border-radius: var(--radius-lg); padding: 6px 20px;
+    overflow: hidden; line-height: 0;
 }
-.footer__logo-img { height: 56px; width: auto; display: block; }
+/* img-height = 52 / 0.43 = 121px → margin-top = -121 × 0.29 = -35px */
+.footer__logo-crop { height: 52px; overflow: hidden; line-height: 0; }
+.footer__logo-img { height: 121px; width: auto; display: block; margin-top: -35px; }
 .footer__about-text { font-size: .84rem; color: rgba(255,255,255,.55); line-height: 1.75; margin-bottom: 20px; }
 .footer__social { display: flex; gap: 12px; }
 .footer__social a {
@@ -892,5 +909,7 @@ textarea.form-control { min-height: 100px; resize: vertical; }
     .trust-strip__grid { grid-template-columns: 1fr; }
     .footer__grid { grid-template-columns: 1fr; }
     .announcement-bar { display: none; }
-    .logo__img { height: 54px; }
+    /* Mobile: visible=50px → img=116px, margin-top=-34px */
+    .logo__crop { height: 50px; }
+    .logo__img { height: 116px; margin-top: -34px; }
 }

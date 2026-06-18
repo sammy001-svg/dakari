@@ -10,7 +10,9 @@ $categories = get_categories();
             <div class="footer__col footer__col--brand">
                 <div class="footer__logo">
                     <div class="footer__logo-img-wrap">
-                        <img src="<?= BASE_URL ?>/assets/images/logo.png" alt="<?= e($site_name) ?>" class="footer__logo-img">
+                        <div class="footer__logo-crop">
+                            <img src="<?= BASE_URL ?>/assets/images/logo.png" alt="<?= e($site_name) ?>" class="footer__logo-img">
+                        </div>
                     </div>
                 </div>
                 <p class="footer__about-text"><?= e(setting('footer_about', 'Premium quality products for the modern lifestyle. Curated with care, delivered with excellence.')) ?></p>

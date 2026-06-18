@@ -57,7 +57,9 @@ $cur_user   = current_user();
 
         <!-- Logo -->
         <a href="<?= BASE_URL ?>/" class="logo">
-            <img src="<?= BASE_URL ?>/assets/images/logo.png" alt="<?= e($site_name) ?>" class="logo__img">
+            <div class="logo__crop">
+                <img src="<?= BASE_URL ?>/assets/images/logo.png" alt="<?= e($site_name) ?>" class="logo__img">
+            </div>
         </a>
 
         <!-- Nav -->

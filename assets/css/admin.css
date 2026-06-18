@@ -40,8 +40,14 @@ body { font-family: var(--font-sans); color: var(--text); background: var(--off-
     padding: 22px 20px; border-bottom: 1px solid rgba(255,255,255,.1);
 }
 .sidebar-brand__logo-link { display: block; margin-bottom: 6px; }
-.sidebar-logo-wrap { background: var(--white); border-radius: var(--radius); padding: 8px 16px; display: inline-block; }
-.sidebar-logo-img { height: 48px; width: auto; display: block; }
+/* Sidebar logo: visible=44px → img=102px, margin-top=-30px */
+.sidebar-logo-wrap {
+    background: var(--white); border-radius: var(--radius);
+    padding: 4px 14px; display: inline-block;
+    overflow: hidden; line-height: 0;
+}
+.sidebar-logo-crop { height: 44px; overflow: hidden; line-height: 0; }
+.sidebar-logo-img { height: 102px; width: auto; display: block; margin-top: -30px; }
 .sidebar-brand__sub { font-size: .7rem; color: rgba(255,255,255,.45); text-transform: uppercase; letter-spacing: .08em; }
 .sidebar-nav { flex: 1; padding: 12px 0; }
 .sidebar-section { padding: 12px 20px 4px; font-size: .65rem; color: rgba(255,255,255,.3); text-transform: uppercase; letter-spacing: .1em; }
