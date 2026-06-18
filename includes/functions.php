@@ -12,8 +12,12 @@ function csrf_token(): string {
 function csrf_field(): string {
     return '<input type="hidden" name="csrf_token" value="' . e(csrf_token()) . '">';
 }
-function verify_csrf(): bool {
-    return isset($_POST['csrf_token']) && hash_equals(csrf_token(), $_POST['csrf_token']);
+function verify_csrf(string $token = ''): bool {
+    $t = $token !== '' ? $token : ($_POST['csrf_token'] ?? '');
+    return $t !== '' && hash_equals(csrf_token(), $t);
+}
+function generate_csrf(): string {
+    return csrf_token();
 }
 
 // ── Settings ─────────────────────────────────────────────────────────────────
@@ -138,11 +142,6 @@ function service_icon_svg(string $icon, int $size = 28): string {
 function service_features(array $svc): array {
     if (empty($svc['features'])) return [];
     return array_filter(array_map('trim', explode("\n", $svc['features'])));
-}
-function slugify(string $text): string {
-    $text = strtolower(trim($text));
-    $text = preg_replace('/[^a-z0-9\s-]/', '', $text);
-    return preg_replace('/[\s-]+/', '-', $text);
 }
 function carousel_img(array $slide): string {
     if (!empty($slide['image']) && file_exists(__DIR__ . '/../uploads/carousel/' . $slide['image'])) {

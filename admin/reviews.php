@@ -79,7 +79,7 @@ $where_sql = implode(' AND ', $where);
 
 $total_count = (int)(fetchOne(
     "SELECT COUNT(*) AS cnt FROM product_reviews r LEFT JOIN users u ON u.id = r.user_id WHERE $where_sql",
-    $types ?: null, ...$params
+    $types ?: '', ...$params
 )['cnt'] ?? 0);
 
 $offset  = ($page_num - 1) * $per_page;
