@@ -1,6 +1,70 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
 
+// ── Database Helper Functions (Fallback if config/database.php only contains credentials) ──
+if (!defined('DB_CHARSET')) {
+    define('DB_CHARSET', 'utf8mb4');
+}
+
+if (!function_exists('db')) {
+    function db(): mysqli {
+        static $conn = null;
+        if ($conn === null) {
+            $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+            if ($conn->connect_error) {
+                die('Database connection failed: ' . $conn->connect_error);
+            }
+            $conn->set_charset(DB_CHARSET);
+        }
+        return $conn;
+    }
+}
+
+if (!function_exists('query')) {
+    function query(string $sql, string $types = '', ...$params): mysqli_result|bool {
+        $db   = db();
+        $stmt = $db->prepare($sql);
+        if (!$stmt) {
+            error_log('DB prepare error: ' . $db->error . ' | SQL: ' . $sql);
+            return false;
+        }
+        if ($types && $params) {
+            $stmt->bind_param($types, ...$params);
+        }
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result !== false ? $result : true;
+    }
+}
+
+if (!function_exists('fetchOne')) {
+    function fetchOne(string $sql, string $types = '', ...$params): ?array {
+        $result = query($sql, $types, ...$params);
+        if ($result instanceof mysqli_result) {
+            $row = $result->fetch_assoc();
+            return $row ?: null;
+        }
+        return null;
+    }
+}
+
+if (!function_exists('fetchAll')) {
+    function fetchAll(string $sql, string $types = '', ...$params): array {
+        $result = query($sql, $types, ...$params);
+        if ($result instanceof mysqli_result) {
+            return $result->fetch_all(MYSQLI_ASSOC);
+        }
+        return [];
+    }
+}
+
+if (!function_exists('lastInsertId')) {
+    function lastInsertId(): int {
+        return (int) db()->insert_id;
+    }
+}
+
+
 // ── Security ──────────────────────────────────────────────────────────────────
 function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
 function csrf_token(): string {
