@@ -1,8 +1,11 @@
 -- Dakari Corporate E-Commerce Database Schema
 -- Engine: MySQL 5.7+
-
-CREATE DATABASE IF NOT EXISTS dakari_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE dakari_db;
+--
+-- SHARED HOSTING NOTE:
+-- Do NOT run this file as-is on cPanel/shared hosting.
+-- Step 1: Create the database manually via cPanel > MySQL Databases.
+-- Step 2: Import this file into that database using phpMyAdmin.
+-- (The CREATE DATABASE command has been intentionally removed.)
 
 -- --------------------------------------------------------
 -- Users table (admins, clients)
