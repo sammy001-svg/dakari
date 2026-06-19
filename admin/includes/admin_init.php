@@ -1,4 +1,9 @@
 <?php
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // Detect root: admin/includes/ is two levels below project root
 $root = dirname(dirname(__DIR__));
 define('ROOT_PATH', $root);

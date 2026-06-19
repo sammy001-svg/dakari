@@ -1,7 +1,6 @@
 -- Dakari — Coupons Phase Migration
--- Run this against dakari_db
+-- Import this into your cPanel database via phpMyAdmin
 
-USE dakari_db;
 
 -- --------------------------------------------------------
 -- Coupons table
