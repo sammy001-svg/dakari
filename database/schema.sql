@@ -214,7 +214,7 @@ CREATE TABLE IF NOT EXISTS settings (
 -- --------------------------------------------------------
 INSERT INTO users (first_name, last_name, email, password, role)
 VALUES ('Site', 'Admin', 'admin@dakari.com',
-        '$2y$12$a2.lI5StqJdSxrteDHH5CeIKANkyn0EKbN7QvS.q5F/LVsSPRkhyW', 'admin');
+        '$2y$12$7q5ihwEQgWp4gD7wnHm6/OTjEaJ5elFsArFlr7IJBdkmGAPNtU06K', 'admin');
 
 -- --------------------------------------------------------
 -- Seed: Default site settings

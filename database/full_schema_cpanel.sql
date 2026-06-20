@@ -349,7 +349,7 @@ CREATE TABLE IF NOT EXISTS services (
 -- Default admin user (password: Admin@1234)
 INSERT IGNORE INTO users (first_name, last_name, email, password, role)
 VALUES ('Site', 'Admin', 'admin@dakari.com',
-        '$2y$12$a2.lI5StqJdSxrteDHH5CeIKANkyn0EKbN7QvS.q5F/LVsSPRkhyW', 'admin');
+        '$2y$12$7q5ihwEQgWp4gD7wnHm6/OTjEaJ5elFsArFlr7IJBdkmGAPNtU06K', 'admin');
 
 -- Default site settings
 INSERT IGNORE INTO settings (setting_key, setting_value) VALUES
@@ -415,5 +415,9 @@ INSERT IGNORE INTO services (title, slug, tagline, description, icon, features, 
 ('Corporate Gifting',    'corporate-gifting',     'Premium gifts for teams & clients',     'Make a lasting impression with bespoke corporate gifts. Bulk orders, custom branding, flexible delivery.',                                                                              'briefcase',    'Minimum order 10 units\nCustom branding & packaging available\nDedicated account manager\nBulk pricing discounts from 15%',                    'From KES 1,500 / unit', 'Request a Quote',      1, 2, 'active'),
 ('Gift Wrapping',        'gift-wrapping',         'Packaging as premium as what is inside','Signature gift wrapping using premium kraft paper, satin ribbon, and handwritten cards.',                                                                                              'gift',         'Signature Dakari kraft wrap\nSatin ribbon in gold or green\nHandwritten personalised card\nSame-day wrapping for in-store orders',              'From KES 250 per item', 'Add to Order',         1, 3, 'active'),
 ('Express Delivery',     'express-delivery',      'Nairobi same-day, Kenya next-day',      'Same-day delivery in Nairobi, next-day to major towns across Kenya. All parcels tracked in real time.',                                                                               'truck',        'Same-day delivery in Nairobi (order before 10am)\nNext-day to Mombasa, Kisumu, Nakuru & Eldoret\nReal-time SMS tracking',                      'From KES 350',          'Learn More',           1, 4, 'active');
+
+-- Seed Admin user
+INSERT IGNORE INTO users (first_name, last_name, email, phone, password, role, is_active)
+VALUES ('Admin', 'Dakari', 'info@dakari.com', '', '$2y$12$7q5ihwEQgWp4gD7wnHm6/OTjEaJ5elFsArFlr7IJBdkmGAPNtU06K', 'admin', 1);
 
 SET FOREIGN_KEY_CHECKS = 1;
