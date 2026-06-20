@@ -13,8 +13,20 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && verify_csrf() && isset($_POST['status
     $valid = ['pending','processing','shipped','delivered','cancelled','refunded'];
     $ns = $_POST['status'];
     if (in_array($ns, $valid)) {
-        query('UPDATE orders SET status=? WHERE id=?','si',$ns,$id);
-        flash('success','Order status updated.');
+        if ($ns !== $order['status']) {
+            query('UPDATE orders SET status=? WHERE id=?','si',$ns,$id);
+            
+            // Send email notification to customer on status update
+            $updated_order = fetchOne('SELECT * FROM orders WHERE id=?','i',$id);
+            if ($updated_order) {
+                $email_subject = "Dakari Store — Order #{$updated_order['order_number']} Status Update: " . ucfirst($ns);
+                $email_html = email_template_status_update($updated_order);
+                send_email($updated_order['ship_email'], $email_subject, $email_html);
+            }
+            flash('success','Order status updated and notification email sent.');
+        } else {
+            flash('success','Order status remains unchanged.');
+        }
         header('Location: order-detail.php?id='.$id); exit;
     }
 }

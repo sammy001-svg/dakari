@@ -19,6 +19,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf()) {
         $errors[] = 'Please enter a valid M-Pesa transaction code (e.g. QGH7X2Y3T1).';
     } else {
         query("UPDATE orders SET payment_status='paid', mpesa_code=? WHERE id=?",'si',$code,$order['id']);
+        
+        // Fetch fresh order details including the updated payment status and name
+        $db_order = fetchOne("SELECT * FROM orders WHERE id = ?",'i',$order['id']);
+        if ($db_order) {
+            // 1. Send payment receipt confirmation to customer
+            $cust_subject = "Payment Confirmed for Order #" . $db_order['order_number'];
+            $cust_html = "<h3>Payment Confirmation</h3>" .
+                         "<p>Dear " . htmlspecialchars($db_order['ship_name']) . ",</p>" .
+                         "<p>We have successfully verified your payment of <strong>" . money((float)$db_order['total']) . "</strong> via M-Pesa (Transaction Code: <strong>$code</strong>) for order <strong>#" . $db_order['order_number'] . "</strong>.</p>" .
+                         "<p>Your order is now being processed and prepared for delivery. We will notify you once it has been shipped.</p>" .
+                         "<p><a href='" . BASE_URL . "/client/orders.php' style='display:inline-block; padding:10px 20px; background-color:#1B4332; color:#fff; text-decoration:none; font-weight:bold; border-radius:4px;'>View Order Status</a></p>";
+            send_email($db_order['ship_email'], $cust_subject, email_layout($cust_subject, $cust_html));
+            
+            // 2. Send payment alert to administrator
+            $admin_email = setting('site_email', 'info@dakari.com');
+            $admin_subject = "Payment Received — Order #" . $db_order['order_number'];
+            $admin_html = "<h3>Payment Alert</h3>" .
+                          "<p>M-Pesa payment has been confirmed for order <strong>#" . $db_order['order_number'] . "</strong>.</p>" .
+                          "<p><strong>Transaction Code:</strong> $code<br>" .
+                          "<strong>Amount Paid:</strong> " . money((float)$db_order['total']) . "<br>" .
+                          "<strong>Customer:</strong> " . htmlspecialchars($db_order['ship_name']) . " (" . htmlspecialchars($db_order['ship_email']) . ")</p>" .
+                          "<p><a href='" . BASE_URL . "/admin/order-detail.php?id=" . $db_order['id'] . "' style='display:inline-block; padding:10px 20px; background-color:#1B4332; color:#fff; text-decoration:none; font-weight:bold; border-radius:4px;'>View Order Details</a></p>";
+            send_email($admin_email, $admin_subject, email_layout($admin_subject, $admin_html));
+        }
+        
         header('Location: order-success.php?order=' . urlencode($order_num)); exit;
     }
 }

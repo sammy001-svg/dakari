@@ -99,6 +99,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf()) {
             query('DELETE FROM cart WHERE session_id=? AND user_id IS NULL','s',session_id());
         }
 
+        // Fetch order details for automated email notifications
+        $db_order = fetchOne('SELECT * FROM orders WHERE id = ?', 'i', $order_id);
+        $db_items = fetchAll('SELECT * FROM order_items WHERE order_id = ?', 'i', $order_id);
+        if ($db_order && !empty($db_items)) {
+            // 1. Send confirmation email to customer
+            $email_subject = "Dakari Store — Order Confirmation #" . $db_order['order_number'];
+            $email_html = email_template_order_invoice($db_order, $db_items);
+            send_email($db_order['ship_email'], $email_subject, $email_html);
+            
+            // 2. Send alert email to administrator
+            $admin_email = setting('site_email', 'info@dakari.com');
+            $admin_subject = "New Order Received — #" . $db_order['order_number'];
+            $admin_html = "<h3>New Order Notification</h3>" .
+                          "<p>A new order has been placed on Dakari Store.</p>" .
+                          "<p><strong>Order Number:</strong> #" . $db_order['order_number'] . "<br>" .
+                          "<strong>Customer:</strong> " . htmlspecialchars($db_order['ship_name']) . " (" . htmlspecialchars($db_order['ship_email']) . ")<br>" .
+                          "<strong>Total Amount:</strong> " . money((float)$db_order['total']) . "<br>" .
+                          "<strong>Payment Method:</strong> " . strtoupper($db_order['payment_method']) . "</p>" .
+                          "<p><a href='" . BASE_URL . "/admin/order-detail.php?id=" . $order_id . "' style='display:inline-block; padding:10px 20px; background-color:#1B4332; color:#fff; text-decoration:none; font-weight:bold; border-radius:4px;'>View Order Details</a></p>";
+            send_email($admin_email, $admin_subject, email_layout($admin_subject, $admin_html));
+        }
+
         if ($data['payment_method'] === 'mpesa') {
             header('Location: payment.php?order=' . urlencode($order_number));
         } else {
