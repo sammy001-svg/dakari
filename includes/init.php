@@ -27,3 +27,18 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/mail.php';
+
+// Maintenance mode: redirect non-admin visitors to maintenance page
+if (setting('maintenance_mode') === '1' && !is_admin()) {
+    $current_script = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
+    $exempt = ['/maintenance.php', '/login.php', '/register.php'];
+    $is_exempt = false;
+    foreach ($exempt as $path) {
+        if (str_ends_with($current_script, $path)) { $is_exempt = true; break; }
+    }
+    if (!$is_exempt) {
+        http_response_code(503);
+        header('Location: ' . BASE_URL . '/maintenance.php');
+        exit;
+    }
+}
