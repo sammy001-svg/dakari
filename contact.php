@@ -150,7 +150,15 @@ include __DIR__ . '/includes/header.php';
                             </div>
                             <div>
                                 <strong>Visit Us</strong>
-                                <span><?= e(setting('site_address', 'Westlands, Nairobi, Kenya')) ?></span>
+                                <?php if (setting('site_address')): ?>
+                                <span><?= e(setting('site_address')) ?></span>
+                                <?php endif; ?>
+                                <?php $loc_parts = array_filter([setting('location_city'), setting('location_country')]); ?>
+                                <?php if ($loc_parts): ?>
+                                <span style="color:var(--text-muted);font-size:.85rem"><?= e(implode(', ', $loc_parts)) ?></span>
+                                <?php elseif (!setting('site_address')): ?>
+                                <span>Nairobi, Kenya</span>
+                                <?php endif; ?>
                             </div>
                         </li>
                         <li>
@@ -177,9 +185,14 @@ include __DIR__ . '/includes/header.php';
                             </div>
                             <div>
                                 <strong>Business Hours</strong>
-                                <span>Mon – Fri: 8 am – 6 pm EAT</span>
-                                <span>Sat: 9 am – 4 pm EAT</span>
-                                <span>Sunday: Closed</span>
+                                <?php if (setting('hours_weekday')): ?><span><?= e(setting('hours_weekday')) ?></span><?php endif; ?>
+                                <?php if (setting('hours_saturday')): ?><span><?= e(setting('hours_saturday')) ?></span><?php endif; ?>
+                                <?php if (setting('hours_sunday')): ?><span><?= e(setting('hours_sunday')) ?></span><?php endif; ?>
+                                <?php if (!setting('hours_weekday') && !setting('hours_saturday') && !setting('hours_sunday')): ?>
+                                <span>Mon – Fri: 8am – 6pm EAT</span>
+                                <span>Sat: 9am – 4pm EAT</span>
+                                <span>Sun: Closed</span>
+                                <?php endif; ?>
                             </div>
                         </li>
                     </ul>
@@ -216,13 +229,25 @@ include __DIR__ . '/includes/header.php';
     </div>
 </section>
 
-<!-- ── Map Placeholder ─────────────────────────────────────────── -->
+<!-- ── Map ──────────────────────────────────────────────────────── -->
+<?php $map_url = setting('location_map_url'); ?>
 <div class="contact-map">
+    <?php if ($map_url): ?>
+    <iframe
+        src="<?= e($map_url) ?>"
+        width="100%" height="100%" style="border:0;display:block"
+        allowfullscreen="" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="<?= e(setting('site_name','Dakari')) ?> location map">
+    </iframe>
+    <?php else: ?>
     <div class="contact-map__inner">
         <svg width="48" height="48" fill="none" stroke="var(--gold)" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        <p>Westlands, Nairobi, Kenya</p>
-        <span>Map integration available on request</span>
+        <?php $city = setting('location_city','Nairobi'); $country = setting('location_country','Kenya'); ?>
+        <p><?= e($city . ', ' . $country) ?></p>
+        <span>Add a Google Maps URL in Admin → Settings → Location to show the map here.</span>
     </div>
+    <?php endif; ?>
 </div>
 
 <!-- ── FAQ Teaser ──────────────────────────────────────────────── -->

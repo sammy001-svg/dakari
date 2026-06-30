@@ -90,7 +90,7 @@ $categories = get_categories();
                     </li>
                     <li>
                         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                        <span>Mon – Sat: 8am – 6pm EAT</span>
+                        <span><?= e(setting('hours_weekday', 'Mon – Fri: 8am – 6pm EAT')) ?></span>
                     </li>
                 </ul>
 

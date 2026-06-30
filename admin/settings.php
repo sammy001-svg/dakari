@@ -13,7 +13,9 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && verify_csrf()) {
         'footer_about','social_instagram','social_facebook','social_twitter','social_tiktok',
         'maintenance_mode','auto_approve_reviews',
         'smtp_enabled','smtp_host','smtp_port','smtp_user','smtp_pass','smtp_secure',
-        'mail_from_email','mail_from_name'
+        'mail_from_email','mail_from_name',
+        'location_city','location_country','location_map_url',
+        'hours_weekday','hours_saturday','hours_sunday',
     ];
     
     foreach ($allowed_keys as $key) {
@@ -64,16 +66,52 @@ include __DIR__ . '/includes/admin_header.php';
                     <div class="form-group" style="margin-bottom:14px"><label class="form-label">Tagline</label><input type="text" name="site_tagline" class="form-control" value="<?= e($s('site_tagline')) ?>"></div>
                     <div class="form-group" style="margin-bottom:14px"><label class="form-label">Contact Email</label><input type="email" name="site_email" class="form-control" value="<?= e($s('site_email')) ?>"></div>
                     <div class="form-group" style="margin-bottom:14px"><label class="form-label">Phone</label><input type="text" name="site_phone" class="form-control" value="<?= e($s('site_phone')) ?>"></div>
-                    <div class="form-group" style="margin-bottom:14px"><label class="form-label">Address</label><input type="text" name="site_address" class="form-control" value="<?= e($s('site_address')) ?>"></div>
+                    <div class="form-group" style="margin-bottom:14px"><label class="form-label">Street Address</label><textarea name="site_address" class="form-control" rows="2" placeholder="e.g. Yaya Centre, Argwings Kodhek Rd"><?= e($s('site_address')) ?></textarea></div>
                     <div class="form-group"><label class="form-label">Footer About Text</label><textarea name="footer_about" class="form-control"><?= e($s('footer_about')) ?></textarea></div>
                 </div>
             </div>
-            <div class="card">
+            <div class="card" style="margin-bottom:20px">
                 <div class="card-header"><span class="card-title">Social Media</span></div>
                 <div class="card-body">
                     <?php foreach (['instagram'=>'Instagram','facebook'=>'Facebook','twitter'=>'Twitter / X','tiktok'=>'TikTok'] as $key=>$label): ?>
                     <div class="form-group" style="margin-bottom:14px"><label class="form-label"><?= $label ?></label><input type="text" name="social_<?= $key ?>" class="form-control" value="<?= e($s('social_'.$key)) ?>" placeholder="URL or #"></div>
                     <?php endforeach; ?>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><span class="card-title">Location &amp; Business Hours</span></div>
+                <div class="card-body">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+                        <div class="form-group">
+                            <label class="form-label">City</label>
+                            <input type="text" name="location_city" class="form-control" value="<?= e($s('location_city','Nairobi')) ?>" placeholder="e.g. Nairobi">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Country</label>
+                            <input type="text" name="location_country" class="form-control" value="<?= e($s('location_country','Kenya')) ?>" placeholder="e.g. Kenya">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom:14px">
+                        <label class="form-label">Google Maps Embed URL</label>
+                        <input type="url" name="location_map_url" class="form-control" value="<?= e($s('location_map_url')) ?>" placeholder="Paste the src URL from Google Maps embed code">
+                        <span class="form-hint" style="margin-top:4px;display:block">
+                            Google Maps → Share → Embed a map → copy the <code>src="..."</code> URL only.
+                        </span>
+                    </div>
+                    <hr style="border:none;border-top:1px solid var(--border);margin:18px 0">
+                    <p class="form-label" style="margin-bottom:12px">Business Hours</p>
+                    <div class="form-group" style="margin-bottom:12px">
+                        <label class="form-label" style="font-weight:400;color:var(--text-muted)">Monday – Friday</label>
+                        <input type="text" name="hours_weekday" class="form-control" value="<?= e($s('hours_weekday','Mon – Fri: 8am – 6pm EAT')) ?>" placeholder="Mon – Fri: 8am – 6pm EAT">
+                    </div>
+                    <div class="form-group" style="margin-bottom:12px">
+                        <label class="form-label" style="font-weight:400;color:var(--text-muted)">Saturday</label>
+                        <input type="text" name="hours_saturday" class="form-control" value="<?= e($s('hours_saturday','Sat: 9am – 4pm EAT')) ?>" placeholder="Sat: 9am – 4pm EAT">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" style="font-weight:400;color:var(--text-muted)">Sunday</label>
+                        <input type="text" name="hours_sunday" class="form-control" value="<?= e($s('hours_sunday','Sun: Closed')) ?>" placeholder="Sun: Closed">
+                    </div>
                 </div>
             </div>
         </div>
