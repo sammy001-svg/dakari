@@ -125,6 +125,7 @@ include __DIR__ . '/includes/admin_header.php';
                         <label class="img-upload-box">
                             <div class="icon"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
                             <p>Click to upload additional images</p>
+                            <p style="font-size:.75rem;color:#aaa">Hold Ctrl / Cmd to select multiple files · JPG, PNG, WEBP · Max 5MB each</p>
                             <input type="file" name="images[]" accept="image/*" multiple>
                         </label>
                         <div class="img-preview-grid"></div>

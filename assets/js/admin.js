@@ -6,7 +6,9 @@
     document.querySelectorAll('.img-upload-box').forEach(box => {
         const input   = box.querySelector('input[type=file]');
         const preview = box.nextElementSibling;
-        box.addEventListener('click', () => input?.click());
+        // No click listener needed — the <input> is inside the <label> so the
+        // browser natively opens the file dialog. Adding input.click() here would
+        // open the dialog twice and force the user to select files twice.
         box.addEventListener('dragover', e => { e.preventDefault(); box.style.borderColor = '#C9A84C'; });
         box.addEventListener('dragleave', () => { box.style.borderColor = ''; });
         box.addEventListener('drop', e => {
