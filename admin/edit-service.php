@@ -8,7 +8,22 @@ $svc = $id ? fetchOne('SELECT * FROM services WHERE id=?', 'i', $id) : null;
 if (!$svc) { flash('error', 'Service not found.'); header('Location: services.php'); exit; }
 
 $errors = [];
-$d = $svc;
+// Merge DB row over defaults so nullable DB columns never produce NULL in the template
+$d = array_merge([
+    'title'       => '',
+    'slug'        => '',
+    'tagline'     => '',
+    'description' => '',
+    'icon'        => 'star',
+    'image'       => '',
+    'features'    => '',
+    'price_label' => '',
+    'cta_text'    => 'Learn More',
+    'cta_url'     => '',
+    'sort_order'  => 0,
+    'is_featured' => 0,
+    'status'      => 'active',
+], $svc);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf($_POST['csrf_token'] ?? '')) {
     $d = [
@@ -23,8 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf($_POST['csrf_token'] ??
         'cta_url'     => trim($_POST['cta_url']      ?? ''),
         'sort_order'  => (int)($_POST['sort_order']  ?? 0),
         'is_featured' => isset($_POST['is_featured']) ? 1 : 0,
-        'status'      => $_POST['status'] === 'inactive' ? 'inactive' : 'active',
-        'image'       => $svc['image'],
+        'status'      => (($_POST['status'] ?? '') === 'inactive') ? 'inactive' : 'active',
+        'image'       => $svc['image'] ?? '',
     ];
     if (!$d['slug'] && $d['title']) $d['slug'] = slugify($d['title']);
 
