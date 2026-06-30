@@ -315,6 +315,13 @@ textarea.form-control { min-height: 120px; resize: vertical; }
 .badge-info    { background: #eaf5ee; color: #1B4332; }
 .badge-success { background: #e6f4ea; color: #2d6a4f; }
 
+/* ── Missing utility classes ─────────────────────────────────── */
+.btn-block { display: flex; width: 100%; justify-content: center; }
+.btn-outline-green { background: transparent; border: 1.5px solid var(--green); color: var(--green); }
+.btn-outline-green:hover { background: var(--green); color: var(--white); }
+.form-grid { display: grid; gap: 16px; }
+.form-grid .full { grid-column: 1 / -1; }
+
 /* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 1200px) {
     .dash-alert-row { grid-template-columns: repeat(3, 1fr); }

@@ -175,6 +175,18 @@ include __DIR__ . '/includes/admin_header.php';
             </div>
         </div>
     </div>
+
+    <!-- Bottom save bar -->
+    <div style="margin-top:24px;padding:20px 24px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:space-between;gap:16px">
+        <span style="font-size:.85rem;color:var(--text-muted)">Fill in the details above, then save.</span>
+        <div style="display:flex;gap:10px">
+            <a href="services.php" class="btn btn-outline">Cancel</a>
+            <button type="submit" class="btn btn-green" style="padding:10px 32px">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                Save Service
+            </button>
+        </div>
+    </div>
 </form>
 
 <?php include __DIR__ . '/includes/admin_footer.php'; ?>
