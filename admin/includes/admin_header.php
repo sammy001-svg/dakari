@@ -60,6 +60,10 @@
             <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="10" rx="2"/><path d="M7 2l-5 5m5 10l-5 5M17 2l5 5m-5 10 5 5"/></svg>
             Carousel
         </a>
+        <a href="<?= BASE_URL ?>/admin/faqs.php" class="sidebar-link <?= ($admin_active ?? '') === 'faqs' ? 'active' : '' ?>">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            FAQs
+        </a>
 
         <div class="sidebar-section">Marketing</div>
         <a href="<?= BASE_URL ?>/admin/reviews.php" class="sidebar-link <?= ($admin_active ?? '') === 'reviews' ? 'active' : '' ?>" style="position:relative">
