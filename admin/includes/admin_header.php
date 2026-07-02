@@ -68,6 +68,10 @@
             <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             About Page
         </a>
+        <a href="<?= BASE_URL ?>/admin/footer.php" class="sidebar-link <?= ($admin_active ?? '') === 'footer' ? 'active' : '' ?>">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+            Footer
+        </a>
 
         <div class="sidebar-section">Marketing</div>
         <a href="<?= BASE_URL ?>/admin/reviews.php" class="sidebar-link <?= ($admin_active ?? '') === 'reviews' ? 'active' : '' ?>" style="position:relative">

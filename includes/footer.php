@@ -1,6 +1,30 @@
 <?php
 $site_name  = setting('site_name', 'Dakari');
 $categories = get_categories();
+
+$company_links = json_decode(setting('footer_company_links', ''), true) ?: [
+    ['label'=>'About Us',       'url'=>'/about.php'],
+    ['label'=>'Our Services',   'url'=>'/services.php'],
+    ['label'=>'Contact Us',     'url'=>'/contact.php'],
+    ['label'=>'Careers',        'url'=>'#'],
+    ['label'=>'Press & Media',  'url'=>'#'],
+    ['label'=>'Sustainability',  'url'=>'#'],
+];
+$care_links = json_decode(setting('footer_care_links', ''), true) ?: [
+    ['label'=>'My Account',          'url'=>'/client/dashboard.php'],
+    ['label'=>'Track My Order',      'url'=>'/client/orders.php'],
+    ['label'=>'Shopping Cart',       'url'=>'/cart.php'],
+    ['label'=>'Returns & Exchanges', 'url'=>'#'],
+    ['label'=>'Shipping Policy',     'url'=>'#'],
+    ['label'=>'FAQ',                 'url'=>'/faq.php'],
+];
+
+$legal_privacy = setting('footer_legal_privacy', '#');
+$legal_terms   = setting('footer_legal_terms',   '#');
+$legal_cookies = setting('footer_legal_cookies', '#');
+
+$all_badges    = ['visa'=>'VISA','mastercard'=>'Mastercard','mpesa'=>'M-Pesa','paypal'=>'PayPal','amex'=>'Amex','stripe'=>'Stripe'];
+$active_badges = array_filter(explode(',', setting('footer_payment_methods', 'visa,mastercard,mpesa,paypal')));
 ?>
 <footer class="footer">
     <div class="footer__top">
@@ -26,7 +50,7 @@ $categories = get_categories();
                 </div>
             </div>
 
-            <!-- Shop column -->
+            <!-- Shop column (auto-populated, not editable) -->
             <div class="footer__col">
                 <h4 class="footer__heading">Shop</h4>
                 <ul class="footer__links">
@@ -44,25 +68,27 @@ $categories = get_categories();
             <div class="footer__col">
                 <h4 class="footer__heading">Company</h4>
                 <ul class="footer__links">
-                    <li><a href="<?= BASE_URL ?>/about.php">About Us</a></li>
-                    <li><a href="<?= BASE_URL ?>/services.php">Our Services</a></li>
-                    <li><a href="<?= BASE_URL ?>/contact.php">Contact Us</a></li>
-                    <li><a href="#">Careers</a></li>
-                    <li><a href="#">Press &amp; Media</a></li>
-                    <li><a href="#">Sustainability</a></li>
+                    <?php foreach ($company_links as $lnk): ?>
+                    <li>
+                        <a href="<?= e(strpos($lnk['url'], 'http') === 0 ? $lnk['url'] : BASE_URL . $lnk['url']) ?>">
+                            <?= e($lnk['label']) ?>
+                        </a>
+                    </li>
+                    <?php endforeach; ?>
                 </ul>
             </div>
 
-            <!-- Customer care column -->
+            <!-- Customer Care column -->
             <div class="footer__col">
                 <h4 class="footer__heading">Customer Care</h4>
                 <ul class="footer__links">
-                    <li><a href="<?= BASE_URL ?>/client/dashboard.php">My Account</a></li>
-                    <li><a href="<?= BASE_URL ?>/client/orders.php">Track My Order</a></li>
-                    <li><a href="<?= BASE_URL ?>/cart.php">Shopping Cart</a></li>
-                    <li><a href="#">Returns &amp; Exchanges</a></li>
-                    <li><a href="#">Shipping Policy</a></li>
-                    <li><a href="#">FAQ</a></li>
+                    <?php foreach ($care_links as $lnk): ?>
+                    <li>
+                        <a href="<?= e(strpos($lnk['url'], 'http') === 0 ? $lnk['url'] : BASE_URL . $lnk['url']) ?>">
+                            <?= e($lnk['label']) ?>
+                        </a>
+                    </li>
+                    <?php endforeach; ?>
                 </ul>
             </div>
 
@@ -88,16 +114,17 @@ $categories = get_categories();
                     </li>
                 </ul>
 
-                <!-- Payment badges -->
+                <?php if (!empty($active_badges)): ?>
                 <div class="footer__payments">
                     <p class="footer__payments-label">We Accept</p>
                     <div class="footer__payment-icons">
-                        <span class="payment-badge">VISA</span>
-                        <span class="payment-badge">Mastercard</span>
-                        <span class="payment-badge">M-Pesa</span>
-                        <span class="payment-badge">PayPal</span>
+                        <?php foreach ($active_badges as $badge):
+                            if (isset($all_badges[$badge])): ?>
+                        <span class="payment-badge"><?= $all_badges[$badge] ?></span>
+                        <?php endif; endforeach; ?>
                     </div>
                 </div>
+                <?php endif; ?>
             </div>
 
         </div>
@@ -107,9 +134,9 @@ $categories = get_categories();
         <div class="container footer__bottom__inner">
             <p>&copy; <?= date('Y') ?> <?= e($site_name) ?>. All rights reserved.</p>
             <div class="footer__legal">
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
-                <a href="#">Cookie Policy</a>
+                <a href="<?= e($legal_privacy) ?>">Privacy Policy</a>
+                <a href="<?= e($legal_terms) ?>">Terms of Service</a>
+                <a href="<?= e($legal_cookies) ?>">Cookie Policy</a>
             </div>
         </div>
     </div>
