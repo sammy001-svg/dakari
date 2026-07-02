@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf($_POST['csrf_token'] ??
             'UPDATE services SET title=?,slug=?,tagline=?,description=?,icon=?,image=?,
              features=?,price_label=?,cta_text=?,cta_url=?,is_featured=?,sort_order=?,status=?
              WHERE id=?',
-            'ssssssssssiiis',
+            'ssssssssssiisi',
             $d['title'], $d['slug'], $d['tagline'], $d['description'],
             $d['icon'],  $d['image'], $d['features'], $d['price_label'],
             $d['cta_text'], $d['cta_url'], $d['is_featured'], $d['sort_order'],
