@@ -1,6 +1,12 @@
 <?php
-$site_name  = setting('site_name', 'Dakari');
-$categories = get_categories();
+$site_name = setting('site_name', 'Dakari');
+
+$shop_links = json_decode(setting('footer_shop_links', ''), true) ?: [
+    ['label'=>'All Products', 'url'=>'/shop.php'],
+    ['label'=>'New Arrivals', 'url'=>'/shop.php?filter=new'],
+    ['label'=>'Featured',     'url'=>'/shop.php?filter=featured'],
+    ['label'=>'On Sale',      'url'=>'/shop.php?filter=sale'],
+];
 
 $company_links = json_decode(setting('footer_company_links', ''), true) ?: [
     ['label'=>'About Us',       'url'=>'/about.php'],
@@ -50,16 +56,16 @@ $active_badges = array_filter(explode(',', setting('footer_payment_methods', 'vi
                 </div>
             </div>
 
-            <!-- Shop column (auto-populated, not editable) -->
+            <!-- Shop column -->
             <div class="footer__col">
                 <h4 class="footer__heading">Shop</h4>
                 <ul class="footer__links">
-                    <li><a href="<?= BASE_URL ?>/shop.php">All Products</a></li>
-                    <li><a href="<?= BASE_URL ?>/shop.php?filter=new">New Arrivals</a></li>
-                    <li><a href="<?= BASE_URL ?>/shop.php?filter=featured">Featured</a></li>
-                    <li><a href="<?= BASE_URL ?>/shop.php?filter=sale">On Sale</a></li>
-                    <?php foreach (array_slice($categories, 0, 4) as $cat): ?>
-                    <li><a href="<?= BASE_URL ?>/shop.php?category=<?= e($cat['slug']) ?>"><?= e($cat['name']) ?></a></li>
+                    <?php foreach ($shop_links as $lnk): ?>
+                    <li>
+                        <a href="<?= e(strpos($lnk['url'], 'http') === 0 ? $lnk['url'] : BASE_URL . $lnk['url']) ?>">
+                            <?= e($lnk['label']) ?>
+                        </a>
+                    </li>
                     <?php endforeach; ?>
                 </ul>
             </div>

@@ -6,6 +6,17 @@ $admin_active     = 'footer';
 /* ── Save ── */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf()) {
 
+    // Shop links repeater → JSON
+    $sh_labels = $_POST['sh_label'] ?? [];
+    $sh_urls   = $_POST['sh_url']   ?? [];
+    $sh = [];
+    foreach ($sh_labels as $i => $lbl) {
+        if (trim($lbl)) $sh[] = ['label' => trim($lbl), 'url' => trim($sh_urls[$i] ?? '#')];
+    }
+    $shj = json_encode($sh, JSON_UNESCAPED_UNICODE);
+    query('INSERT INTO settings (setting_key,setting_value) VALUES (?,?) ON DUPLICATE KEY UPDATE setting_value=?',
+          'sss', 'footer_shop_links', $shj, $shj);
+
     // Company links repeater → JSON
     $co_labels = $_POST['co_label'] ?? [];
     $co_urls   = $_POST['co_url']   ?? [];
@@ -46,6 +57,12 @@ $s = [];
 foreach ($rows as $r) $s[$r['setting_key']] = $r['setting_value'];
 $g = fn($k, $d='') => $s[$k] ?? $d;
 
+$shop_links = json_decode($g('footer_shop_links', ''), true) ?: [
+    ['label'=>'All Products', 'url'=>'/shop.php'],
+    ['label'=>'New Arrivals', 'url'=>'/shop.php?filter=new'],
+    ['label'=>'Featured',     'url'=>'/shop.php?filter=featured'],
+    ['label'=>'On Sale',      'url'=>'/shop.php?filter=sale'],
+];
 $company_links = json_decode($g('footer_company_links', ''), true) ?: [
     ['label'=>'About Us',      'url'=>'/about.php'],
     ['label'=>'Our Services',  'url'=>'/services.php'],
@@ -96,7 +113,27 @@ include __DIR__ . '/includes/admin_header.php';
 <form id="footer-form" method="POST">
     <?= csrf_field() ?>
 
+    <!-- Shop + Company links -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+
+        <!-- Shop links -->
+        <div class="admin-card">
+            <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:16px">
+                <h3 style="font-family:var(--font-serif);color:var(--green);font-size:1rem;margin:0">Shop Column</h3>
+                <button type="button" onclick="addLink('sh-wrap','sh_label','sh_url')"
+                        style="padding:5px 12px;background:#1B4332;color:#fff;border:none;border-radius:4px;font-size:.78rem;cursor:pointer">+ Add Link</button>
+            </div>
+            <div id="sh-wrap" style="display:flex;flex-direction:column;gap:8px">
+                <?php foreach ($shop_links as $lnk): ?>
+                <div class="link-row" style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center">
+                    <input type="text" name="sh_label[]" class="form-control" value="<?= e($lnk['label']) ?>" placeholder="Label" style="font-size:.82rem">
+                    <input type="text" name="sh_url[]"   class="form-control" value="<?= e($lnk['url']) ?>"   placeholder="/shop.php?filter=new" style="font-size:.82rem">
+                    <button type="button" onclick="this.closest('.link-row').remove()"
+                            style="padding:6px 10px;border:1px solid #fca5a5;color:#dc2626;background:#fff;border-radius:4px;cursor:pointer;font-size:.8rem">✕</button>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
 
         <!-- Company links -->
         <div class="admin-card">
