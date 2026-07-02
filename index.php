@@ -101,8 +101,8 @@ include __DIR__ . '/includes/header.php';
                     <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </div>
                 <div>
-                    <strong>Free Shipping</strong>
-                    <span>On orders over <?= money(5000) ?></span>
+                    <strong>We Ship Worldwide</strong>
+                    <span>Delivering to your doorstep</span>
                 </div>
             </div>
             <div class="trust-item">
