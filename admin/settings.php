@@ -16,6 +16,10 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && verify_csrf()) {
         'mail_from_email','mail_from_name',
         'location_city','location_country','location_map_url',
         'hours_weekday','hours_saturday','hours_sunday',
+        'home_stat1_num','home_stat1_label',
+        'home_stat2_num','home_stat2_label',
+        'home_stat3_num','home_stat3_label',
+        'home_stat4_num','home_stat4_label',
     ];
     
     foreach ($allowed_keys as $key) {
@@ -116,6 +120,33 @@ include __DIR__ . '/includes/admin_header.php';
             </div>
         </div>
         <div>
+            <div class="card" style="margin-bottom:20px">
+                <div class="card-header"><span class="card-title">Homepage Stats Banner</span></div>
+                <div class="card-body">
+                    <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:16px">The four stat blocks shown below the hero carousel on the home page.</p>
+                    <?php
+                    $stat_defaults = [
+                        1 => ['500+',  'Premium Products'],
+                        2 => ['12K+',  'Happy Customers'],
+                        3 => ['50+',   'Brand Partners'],
+                        4 => ['4',     'Years in Business'],
+                    ];
+                    foreach ($stat_defaults as $i => [$dn, $dl]): ?>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)">
+                        <div class="form-group">
+                            <label class="form-label" style="font-size:.78rem;color:var(--text-muted)">Stat <?= $i ?> — Number</label>
+                            <input type="text" name="home_stat<?= $i ?>_num" class="form-control"
+                                   value="<?= e($s("home_stat{$i}_num", $dn)) ?>" placeholder="<?= $dn ?>">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="font-size:.78rem;color:var(--text-muted)">Stat <?= $i ?> — Label</label>
+                            <input type="text" name="home_stat<?= $i ?>_label" class="form-control"
+                                   value="<?= e($s("home_stat{$i}_label", $dl)) ?>" placeholder="<?= $dl ?>">
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
             <div class="card" style="margin-bottom:20px">
                 <div class="card-header"><span class="card-title">Commerce</span></div>
                 <div class="card-body">

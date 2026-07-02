@@ -235,20 +235,20 @@ include __DIR__ . '/includes/header.php';
     <div class="container">
         <div class="stats-grid">
             <div class="stat-item">
-                <span class="stat-value">500+</span>
-                <span class="stat-label">Premium Products</span>
+                <span class="stat-value"><?= e(setting('home_stat1_num', '500+')) ?></span>
+                <span class="stat-label"><?= e(setting('home_stat1_label', 'Premium Products')) ?></span>
             </div>
             <div class="stat-item">
-                <span class="stat-value">12K+</span>
-                <span class="stat-label">Happy Customers</span>
+                <span class="stat-value"><?= e(setting('home_stat2_num', '12K+')) ?></span>
+                <span class="stat-label"><?= e(setting('home_stat2_label', 'Happy Customers')) ?></span>
             </div>
             <div class="stat-item">
-                <span class="stat-value">50+</span>
-                <span class="stat-label">Brand Partners</span>
+                <span class="stat-value"><?= e(setting('home_stat3_num', '50+')) ?></span>
+                <span class="stat-label"><?= e(setting('home_stat3_label', 'Brand Partners')) ?></span>
             </div>
             <div class="stat-item">
-                <span class="stat-value">4</span>
-                <span class="stat-label">Years in Business</span>
+                <span class="stat-value"><?= e(setting('home_stat4_num', '4')) ?></span>
+                <span class="stat-label"><?= e(setting('home_stat4_label', 'Years in Business')) ?></span>
             </div>
         </div>
     </div>
