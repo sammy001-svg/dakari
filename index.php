@@ -401,8 +401,8 @@ include __DIR__ . '/includes/header.php';
                 <div style="width:56px;height:56px;border-radius:50%;background:rgba(201,168,76,.15);display:flex;align-items:center;justify-content:center">
                     <svg width="28" height="28" fill="none" stroke="#C9A84C" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
-                <h3 style="color:var(--white);font-family:var(--font-serif);font-size:1.3rem;margin:0">You're subscribed!</h3>
-                <p style="color:rgba(255,255,255,.75);margin:0;font-size:.95rem">
+                <h3 style="color:#C9A84C;font-family:var(--font-serif);font-size:1.3rem;margin:0">You're subscribed!</h3>
+                <p style="color:#f0e6c8;margin:0;font-size:.95rem">
                     Welcome to the Dakari community. Watch your inbox for exclusive offers and new arrivals.
                 </p>
             </div>
