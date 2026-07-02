@@ -306,41 +306,42 @@ include __DIR__ . '/includes/header.php';
 <?php endif; ?>
 
 <!-- ── Why Choose Dakari ──────────────────────────────────────────────────── -->
+<?php
+$why_pillars = json_decode(setting('why_pillars', ''), true) ?: [
+    ['title' => 'Quality Assurance', 'desc' => 'Every product passes our rigorous quality inspection before listing.'],
+    ['title' => 'Ethical Sourcing',  'desc' => 'We partner only with responsible, certified suppliers.'],
+    ['title' => 'Customer First',    'desc' => 'Our team is available 24/7 to ensure your satisfaction.'],
+    ['title' => 'Secure Shopping',   'desc' => 'End-to-end encryption and secure payment processing.'],
+];
+?>
 <section class="why-section">
     <div class="container">
         <div class="why-section__inner">
             <div class="why-section__text">
-                <p class="section-eyebrow" style="color:var(--gold-light)">Why Dakari</p>
-                <h2 class="section-title" style="color:var(--white)">A Brand Built on<br><span class="gold-accent">Excellence</span></h2>
+                <p class="section-eyebrow" style="color:var(--gold-light)"><?= e(setting('why_eyebrow', 'Why Dakari')) ?></p>
+                <h2 class="section-title" style="color:var(--white)"><?= e(setting('why_heading', 'A Brand Built on')) ?><br><span class="gold-accent"><?= e(setting('why_heading_accent', 'Excellence')) ?></span></h2>
                 <p style="color:rgba(255,255,255,.75);line-height:1.8;margin-bottom:32px">
-                    Since our founding, Dakari has stood at the intersection of quality and style. Every product in our collection is carefully sourced, quality-tested, and curated to reflect the premium standards our customers expect.
+                    <?= e(setting('why_body', 'Since our founding, Dakari has stood at the intersection of quality and style. Every product in our collection is carefully sourced, quality-tested, and curated to reflect the premium standards our customers expect.')) ?>
                 </p>
                 <div class="why-pillars">
-                    <?php
-                    $pillars = [
-                        ['Quality Assurance',  'Every product passes our rigorous quality inspection before listing.'],
-                        ['Ethical Sourcing',   'We partner only with responsible, certified suppliers.'],
-                        ['Customer First',     'Our team is available 24/7 to ensure your satisfaction.'],
-                        ['Secure Shopping',    'End-to-end encryption and secure payment processing.'],
-                    ];
-                    foreach ($pillars as $p): ?>
+                    <?php foreach ($why_pillars as $p): ?>
                     <div class="why-pillar">
                         <div class="why-pillar__dot"></div>
                         <div>
-                            <strong><?= $p[0] ?></strong>
-                            <span><?= $p[1] ?></span>
+                            <strong><?= e($p['title']) ?></strong>
+                            <span><?= e($p['desc']) ?></span>
                         </div>
                     </div>
                     <?php endforeach; ?>
                 </div>
-                <a href="about.php" class="btn btn-gold btn-lg" style="margin-top:32px">Learn Our Story</a>
+                <a href="<?= e(setting('why_btn_url', BASE_URL . '/about.php')) ?>" class="btn btn-gold btn-lg" style="margin-top:32px"><?= e(setting('why_btn_text', 'Learn Our Story')) ?></a>
             </div>
             <div class="why-section__visual">
                 <div class="why-card">
-                    <div class="why-card__badge">Est. 2020</div>
-                    <div class="why-card__stat"><span>12,000+</span><small>Customers Served</small></div>
-                    <div class="why-card__stat"><span>4.9 ★</span><small>Average Rating</small></div>
-                    <div class="why-card__stat"><span>99%</span><small>Satisfaction Rate</small></div>
+                    <div class="why-card__badge"><?= e(setting('why_badge', 'Est. 2020')) ?></div>
+                    <div class="why-card__stat"><span><?= e(setting('why_stat1_num', '12,000+')) ?></span><small><?= e(setting('why_stat1_label', 'Customers Served')) ?></small></div>
+                    <div class="why-card__stat"><span><?= e(setting('why_stat2_num', '4.9 ★')) ?></span><small><?= e(setting('why_stat2_label', 'Average Rating')) ?></small></div>
+                    <div class="why-card__stat"><span><?= e(setting('why_stat3_num', '99%')) ?></span><small><?= e(setting('why_stat3_label', 'Satisfaction Rate')) ?></small></div>
                 </div>
             </div>
         </div>

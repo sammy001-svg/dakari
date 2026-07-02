@@ -69,6 +69,10 @@
             <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             About Page
         </a>
+        <a href="<?= BASE_URL ?>/admin/why.php" class="sidebar-link <?= ($admin_active ?? '') === 'why' ? 'active' : '' ?>">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Why Dakari
+        </a>
         <a href="<?= BASE_URL ?>/admin/footer.php" class="sidebar-link <?= ($admin_active ?? '') === 'footer' ? 'active' : '' ?>">
             <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
             Footer
