@@ -8,6 +8,9 @@ $page_num      = max(1, (int)($_GET['page'] ?? 1));
 $per_page      = 12;
 $offset        = ($page_num - 1) * $per_page;
 
+// Handle both ?filter=new (nav links) and ?filter[]=new (sidebar checkboxes)
+$filters = array_filter((array)($_GET['filter'] ?? []));
+
 // Build query
 $where_parts = ['p.is_active = 1'];
 $params      = [];
@@ -23,6 +26,15 @@ if ($q) {
     $params[]      = "%$q%";
     $params[]      = "%$q%";
     $types        .= 'ss';
+}
+if (in_array('new', $filters)) {
+    $where_parts[] = 'p.is_new = 1';
+}
+if (in_array('featured', $filters)) {
+    $where_parts[] = 'p.is_featured = 1';
+}
+if (in_array('sale', $filters)) {
+    $where_parts[] = 'p.sale_price IS NOT NULL AND p.sale_price > 0';
 }
 
 $where_sql = implode(' AND ', $where_parts);
@@ -51,7 +63,9 @@ $products = fetchAll(
 );
 
 $current_category = $category_slug ? fetchOne('SELECT * FROM categories WHERE slug = ?', 's', $category_slug) : null;
-$page_title       = $current_category ? $current_category['name'] : ($q ? "Search: $q" : 'Shop');
+$filter_labels = ['new' => 'New Arrivals', 'sale' => 'On Sale', 'featured' => 'Featured'];
+$filter_title  = count($filters) === 1 ? ($filter_labels[reset($filters)] ?? null) : null;
+$page_title    = $current_category ? $current_category['name'] : ($q ? "Search: $q" : ($filter_title ?? 'Shop'));
 $active_page      = 'shop';
 $all_categories   = get_categories();
 
@@ -111,15 +125,15 @@ include __DIR__ . '/includes/header.php';
                         <?php endif; ?>
                         <ul class="filter-list" style="margin-bottom:16px">
                             <li class="filter-item">
-                                <input type="checkbox" name="filter[]" value="new" id="f_new" <?= in_array('new', (array)($_GET['filter'] ?? [])) ? 'checked' : '' ?>>
+                                <input type="checkbox" name="filter[]" value="new" id="f_new" <?= in_array('new', $filters) ? 'checked' : '' ?>>
                                 <label for="f_new">New Arrivals</label>
                             </li>
                             <li class="filter-item">
-                                <input type="checkbox" name="filter[]" value="sale" id="f_sale" <?= in_array('sale', (array)($_GET['filter'] ?? [])) ? 'checked' : '' ?>>
+                                <input type="checkbox" name="filter[]" value="sale" id="f_sale" <?= in_array('sale', $filters) ? 'checked' : '' ?>>
                                 <label for="f_sale">On Sale</label>
                             </li>
                             <li class="filter-item">
-                                <input type="checkbox" name="filter[]" value="featured" id="f_featured" <?= in_array('featured', (array)($_GET['filter'] ?? [])) ? 'checked' : '' ?>>
+                                <input type="checkbox" name="filter[]" value="featured" id="f_featured" <?= in_array('featured', $filters) ? 'checked' : '' ?>>
                                 <label for="f_featured">Featured</label>
                             </li>
                         </ul>
