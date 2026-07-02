@@ -1,5 +1,34 @@
 <?php
 require_once __DIR__ . '/includes/init.php';
+
+/* ── Newsletter subscription handler ── */
+$nl_success = isset($_GET['subscribed']);
+$nl_error   = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nl_submit'])) {
+    if (!verify_csrf($_POST['csrf_token'] ?? '')) {
+        $nl_error = 'Security check failed. Please refresh the page and try again.';
+    } else {
+        $nl_email = trim($_POST['email'] ?? '');
+        $nl_name  = trim($_POST['name']  ?? '');
+        if (!filter_var($nl_email, FILTER_VALIDATE_EMAIL)) {
+            $nl_error = 'Please enter a valid email address.';
+        } else {
+            try {
+                $existing = fetchOne('SELECT id FROM newsletter_subscribers WHERE email=?', 's', $nl_email);
+                if (!$existing) {
+                    query('INSERT INTO newsletter_subscribers (name,email,ip_address) VALUES (?,?,?)',
+                          'sss', $nl_name, $nl_email, $_SERVER['REMOTE_ADDR'] ?? '');
+                }
+                header('Location: ' . BASE_URL . '/?subscribed=1#newsletter'); exit;
+            } catch (\Throwable $e) {
+                error_log('Newsletter subscribe error: ' . $e->getMessage());
+                $nl_error = 'Something went wrong. Please try again later.';
+            }
+        }
+    }
+}
+
 $page_title   = 'Home';
 $active_page  = 'home';
 $slides       = get_carousel_slides();
@@ -358,7 +387,7 @@ include __DIR__ . '/includes/header.php';
 <?php endif; ?>
 
 <!-- ── Newsletter ─────────────────────────────────────────────────────────── -->
-<section class="newsletter-section">
+<section class="newsletter-section" id="newsletter">
     <div class="container">
         <div class="newsletter-inner">
             <div class="newsletter-text">
@@ -366,15 +395,35 @@ include __DIR__ . '/includes/header.php';
                 <h2>Join the Dakari <span class="gold-accent">Community</span></h2>
                 <p>Get exclusive access to new arrivals, special offers, and insider style guides — delivered straight to your inbox.</p>
             </div>
-            <form class="newsletter-form" action="#" method="post">
+
+            <?php if ($nl_success): ?>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;padding:24px 0">
+                <div style="width:56px;height:56px;border-radius:50%;background:rgba(201,168,76,.15);display:flex;align-items:center;justify-content:center">
+                    <svg width="28" height="28" fill="none" stroke="#C9A84C" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <h3 style="color:var(--white);font-family:var(--font-serif);font-size:1.3rem;margin:0">You're subscribed!</h3>
+                <p style="color:rgba(255,255,255,.75);margin:0;font-size:.95rem">
+                    Welcome to the Dakari community. Watch your inbox for exclusive offers and new arrivals.
+                </p>
+            </div>
+            <?php else: ?>
+            <form class="newsletter-form" action="<?= BASE_URL ?>/#newsletter" method="POST">
                 <?= csrf_field() ?>
+                <input type="hidden" name="nl_submit" value="1">
+                <?php if ($nl_error): ?>
+                <p style="color:#fca5a5;font-size:.85rem;margin-bottom:10px;text-align:center"><?= e($nl_error) ?></p>
+                <?php endif; ?>
                 <div class="newsletter-form__row">
-                    <input type="text" name="name" class="newsletter-input" placeholder="Your name">
-                    <input type="email" name="email" class="newsletter-input" placeholder="Email address" required>
+                    <input type="text"  name="name"  class="newsletter-input" placeholder="Your name"
+                           value="<?= e($_POST['name'] ?? '') ?>">
+                    <input type="email" name="email" class="newsletter-input" placeholder="Email address" required
+                           value="<?= e($_POST['email'] ?? '') ?>">
                     <button type="submit" class="btn btn-gold">Subscribe</button>
                 </div>
                 <p class="newsletter-disclaimer">By subscribing you agree to our privacy policy. Unsubscribe anytime.</p>
             </form>
+            <?php endif; ?>
+
         </div>
     </div>
 </section>
