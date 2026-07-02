@@ -35,7 +35,7 @@ $cur_user   = current_user();
             </span>
         </div>
         <div class="announcement-bar__center">
-            Free shipping on orders over <?= money(5000) ?> &nbsp;·&nbsp; Authentic, Premium Quality
+            We Ship Worldwide &nbsp;·&nbsp; Authentic, Premium Quality
         </div>
         <div class="announcement-bar__right">
             <a href="<?= e(setting('social_instagram', '#')) ?>" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
