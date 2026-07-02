@@ -70,7 +70,9 @@ include __DIR__ . '/includes/header.php';
             <!-- Left: Form -->
             <div class="contact-form-wrap">
                 <h2 class="contact-form-title">Send Us a Message</h2>
+                <?php if (!$success): ?>
                 <p class="contact-form-sub">Fill in the form below and we'll get back to you within 24 hours.</p>
+                <?php endif; ?>
 
                 <?php if ($success): ?>
                 <div class="contact-success">
