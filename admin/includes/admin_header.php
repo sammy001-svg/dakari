@@ -9,6 +9,7 @@
     <link rel="icon" type="image/jpeg" href="<?= BASE_URL ?>/assets/images/favicon.jpg">
     <link rel="apple-touch-icon" href="<?= BASE_URL ?>/assets/images/favicon.jpg">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin.css">
+    <style><?= brand_css_vars() ?></style>
 </head>
 <body>
 

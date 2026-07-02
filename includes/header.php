@@ -17,6 +17,7 @@ $cur_user   = current_user();
     <link rel="icon" type="image/jpeg" href="<?= BASE_URL ?>/assets/images/favicon.jpg">
     <link rel="apple-touch-icon" href="<?= BASE_URL ?>/assets/images/favicon.jpg">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css">
+    <style><?= brand_css_vars() ?></style>
     <?php if (!empty($extra_css)) echo $extra_css; ?>
 </head>
 <body>

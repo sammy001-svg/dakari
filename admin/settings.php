@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && verify_csrf()) {
         'home_stat2_num','home_stat2_label',
         'home_stat3_num','home_stat3_label',
         'home_stat4_num','home_stat4_label',
+        'color_primary','color_secondary',
     ];
     
     foreach ($allowed_keys as $key) {
@@ -120,6 +121,60 @@ include __DIR__ . '/includes/admin_header.php';
             </div>
         </div>
         <div>
+            <!-- Brand Colors -->
+            <div class="admin-card" style="margin-bottom:20px">
+                <div style="border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:18px">
+                    <h3 style="font-family:var(--font-serif);color:var(--green);font-size:1rem;margin:0">Brand Colors</h3>
+                    <p style="font-size:.78rem;color:var(--text-muted);margin-top:4px">Changes apply site-wide — navigation, buttons, badges, and accents update instantly after saving.</p>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+                    <!-- Primary -->
+                    <div>
+                        <label class="form-label" style="margin-bottom:8px;display:block">Primary Color</label>
+                        <div style="display:flex;gap:8px;align-items:center">
+                            <input type="color" id="cp-primary" name="color_primary"
+                                   value="<?= e($s('color_primary','#1B4332')) ?>"
+                                   style="width:44px;height:44px;border:1px solid var(--border);border-radius:6px;padding:3px;cursor:pointer;background:#fff"
+                                   oninput="syncColor(this,'ti-primary')">
+                            <input type="text" id="ti-primary" class="form-control" maxlength="7"
+                                   value="<?= e($s('color_primary','#1B4332')) ?>"
+                                   placeholder="#1B4332"
+                                   style="flex:1;font-family:monospace;font-size:.85rem"
+                                   oninput="syncText(this,'cp-primary')">
+                        </div>
+                        <div style="margin-top:10px;border-radius:6px;height:32px;background:<?= e($s('color_primary','#1B4332')) ?>" id="prev-primary"></div>
+                        <p style="font-size:.72rem;color:var(--text-muted);margin-top:5px">Nav bar, headings, buttons</p>
+                    </div>
+                    <!-- Secondary -->
+                    <div>
+                        <label class="form-label" style="margin-bottom:8px;display:block">Secondary / Accent Color</label>
+                        <div style="display:flex;gap:8px;align-items:center">
+                            <input type="color" id="cp-secondary" name="color_secondary"
+                                   value="<?= e($s('color_secondary','#C9A84C')) ?>"
+                                   style="width:44px;height:44px;border:1px solid var(--border);border-radius:6px;padding:3px;cursor:pointer;background:#fff"
+                                   oninput="syncColor(this,'ti-secondary')">
+                            <input type="text" id="ti-secondary" class="form-control" maxlength="7"
+                                   value="<?= e($s('color_secondary','#C9A84C')) ?>"
+                                   placeholder="#C9A84C"
+                                   style="flex:1;font-family:monospace;font-size:.85rem"
+                                   oninput="syncText(this,'cp-secondary')">
+                        </div>
+                        <div style="margin-top:10px;border-radius:6px;height:32px;background:<?= e($s('color_secondary','#C9A84C')) ?>" id="prev-secondary"></div>
+                        <p style="font-size:.72rem;color:var(--text-muted);margin-top:5px">Highlights, badges, prices</p>
+                    </div>
+                </div>
+                <!-- Combined preview bar -->
+                <div style="margin-top:18px;border-radius:6px;overflow:hidden;display:flex;height:52px">
+                    <div id="prev-bar" style="flex:3;background:<?= e($s('color_primary','#1B4332')) ?>;display:flex;align-items:center;padding:0 18px">
+                        <span style="color:#fff;font-size:.85rem;font-weight:600;letter-spacing:.04em"><?= e($s('site_name','Dakari')) ?></span>
+                    </div>
+                    <div id="prev-btn" style="flex:1;display:flex;align-items:center;justify-content:center;background:<?= e($s('color_secondary','#C9A84C')) ?>">
+                        <span style="color:#fff;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Shop Now</span>
+                    </div>
+                </div>
+                <p style="font-size:.72rem;color:var(--text-muted);text-align:center;margin-top:8px">Preview — save to apply to the live site</p>
+            </div>
+
             <div class="card" style="margin-bottom:20px">
                 <div class="card-header"><span class="card-title">Homepage Stats Banner</span></div>
                 <div class="card-body">
@@ -235,4 +290,26 @@ include __DIR__ . '/includes/admin_header.php';
     </div>
 </form>
 
+<script>
+function syncColor(picker, textId) {
+    document.getElementById(textId).value = picker.value;
+    updateColorPreviews();
+}
+function syncText(input, pickerId) {
+    if (/^#[0-9a-fA-F]{6}$/i.test(input.value)) {
+        document.getElementById(pickerId).value = input.value;
+        updateColorPreviews();
+    }
+}
+function updateColorPreviews() {
+    const p = document.getElementById('cp-primary').value;
+    const s = document.getElementById('cp-secondary').value;
+    document.getElementById('prev-primary').style.background   = p;
+    document.getElementById('prev-secondary').style.background = s;
+    document.getElementById('prev-bar').style.background       = p;
+    document.getElementById('prev-btn').style.background       = s;
+    document.documentElement.style.setProperty('--green', p);
+    document.documentElement.style.setProperty('--gold',  s);
+}
+</script>
 <?php include __DIR__ . '/includes/admin_footer.php'; ?>

@@ -485,6 +485,61 @@ function review_display_name(array $review): string {
     return e($review['guest_name'] ?? 'Anonymous');
 }
 
+// ── Brand colour helpers ──────────────────────────────────────────────────────
+function _hex_to_hsl(string $hex): array {
+    $r = hexdec(substr($hex, 1, 2)) / 255;
+    $g = hexdec(substr($hex, 3, 2)) / 255;
+    $b = hexdec(substr($hex, 5, 2)) / 255;
+    $max = max($r, $g, $b); $min = min($r, $g, $b);
+    $l = ($max + $min) / 2;
+    if (abs($max - $min) < 1e-10) return [0.0, 0.0, $l];
+    $d = $max - $min;
+    $s = $l > 0.5 ? $d / (2 - $max - $min) : $d / ($max + $min);
+    if (abs($max - $r) < 1e-10)     $h = ($g - $b) / $d + ($g < $b ? 6 : 0);
+    elseif (abs($max - $g) < 1e-10) $h = ($b - $r) / $d + 2;
+    else                             $h = ($r - $g) / $d + 4;
+    return [$h / 6, $s, $l];
+}
+function _hue_to_rgb(float $p, float $q, float $t): float {
+    if ($t < 0) $t += 1; if ($t > 1) $t -= 1;
+    if ($t < 1/6) return $p + ($q - $p) * 6 * $t;
+    if ($t < 1/2) return $q;
+    if ($t < 2/3) return $p + ($q - $p) * (2/3 - $t) * 6;
+    return $p;
+}
+function _hsl_to_hex(float $h, float $s, float $l): string {
+    $l = max(0.0, min(1.0, $l));
+    if ($s < 1e-10) { $v = (int)round($l * 255); return sprintf('#%02x%02x%02x', $v, $v, $v); }
+    $q = $l < 0.5 ? $l * (1 + $s) : $l + $s - $l * $s;
+    $p = 2 * $l - $q;
+    return sprintf('#%02x%02x%02x',
+        (int)round(_hue_to_rgb($p, $q, $h + 1/3) * 255),
+        (int)round(_hue_to_rgb($p, $q, $h)       * 255),
+        (int)round(_hue_to_rgb($p, $q, $h - 1/3) * 255)
+    );
+}
+function brand_css_vars(): string {
+    $primary   = setting('color_primary',   '#1B4332');
+    $secondary = setting('color_secondary', '#C9A84C');
+    if (!preg_match('/^#[0-9a-fA-F]{6}$/', $primary))   $primary   = '#1B4332';
+    if (!preg_match('/^#[0-9a-fA-F]{6}$/', $secondary)) $secondary = '#C9A84C';
+    [$h1, $s1, $l1] = _hex_to_hsl($primary);
+    [$h2, $s2, $l2] = _hex_to_hsl($secondary);
+    $p_dark  = _hsl_to_hex($h1, $s1, $l1 - 0.08);
+    $p_light = _hsl_to_hex($h1, $s1, $l1 + 0.15);
+    $s_dark  = _hsl_to_hex($h2, $s2, $l2 - 0.10);
+    $s_light = _hsl_to_hex($h2, $s2, $l2 + 0.15);
+    return ":root{"
+        . "--green:{$primary};"
+        . "--green-dark:{$p_dark};"
+        . "--green-mid:{$p_light};"
+        . "--green-light:{$p_light};"
+        . "--gold:{$secondary};"
+        . "--gold-dark:{$s_dark};"
+        . "--gold-light:{$s_light};"
+        . "}";
+}
+
 // ── Flash messages ────────────────────────────────────────────────────────────
 function flash(string $type, string $message): void {
     $_SESSION['flash'][] = ['type' => $type, 'message' => $message];
