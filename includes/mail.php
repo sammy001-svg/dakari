@@ -6,7 +6,7 @@
  * and responsive HTML templates with premium corporate styling.
  */
 
-function send_email(string $to, string $subject, string $html_content, string $alt_content = ''): bool {
+function send_email(string $to, string $subject, string $html_content, string $alt_content = '', string $reply_to = ''): bool {
     $smtp_enabled = (setting('smtp_enabled', '0') === '1');
     $smtp_host    = setting('smtp_host', '');
     $smtp_port    = (int)setting('smtp_port', '587');
@@ -43,6 +43,7 @@ function send_email(string $to, string $subject, string $html_content, string $a
             // Set From and To
             $mail->setFrom($from_email, $from_name);
             $mail->addAddress($to);
+            if ($reply_to) $mail->addReplyTo($reply_to);
             $mail->isHTML(true);
 
             $mail->Subject = $subject;
@@ -61,7 +62,7 @@ function send_email(string $to, string $subject, string $html_content, string $a
     $headers  = "MIME-Version: 1.0\r\n";
     $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
     $headers .= "From: " . mb_encode_mimeheader($from_name) . " <" . $from_email . ">\r\n";
-    $headers .= "Reply-To: <" . $from_email . ">\r\n";
+    $headers .= "Reply-To: <" . ($reply_to ?: $from_email) . ">\r\n";
     $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
 
     $result = mail($to, $subject, $html_content, $headers);

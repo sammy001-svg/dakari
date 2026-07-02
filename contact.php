@@ -36,6 +36,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
             );
             $_SESSION['contact_last_sent'] = time();
             $success = true;
+
+            // Notify sales team
+            $safe_name    = htmlspecialchars($name);
+            $safe_email   = htmlspecialchars($email);
+            $safe_phone   = htmlspecialchars($phone ?: '—');
+            $safe_cat     = htmlspecialchars($category ?: '—');
+            $safe_subject = htmlspecialchars($subject ?: '—');
+            $safe_msg     = nl2br(htmlspecialchars($message_val));
+            $received_at  = date('d M Y, H:i') . ' (EAT)';
+            $admin_url    = BASE_URL . '/admin/messages.php';
+            $green        = '#1B4332';
+            $gold         = '#C9A84C';
+            $safe_sitename = htmlspecialchars(setting('site_name', 'Dakari'));
+
+            $notify_body = <<<HTML
+<h2 style="font-family:'Georgia',serif;font-size:20px;color:{$green};margin-top:0">
+    New Contact Message Received
+</h2>
+<p style="color:#4a5568;margin-bottom:24px">A visitor has submitted the contact form on <strong>{$safe_sitename}</strong>. Details are below.</p>
+
+<table width="100%" style="font-size:14px;border-collapse:collapse;margin-bottom:24px">
+    <tr style="background:#f7fafc">
+        <td style="padding:10px 14px;color:#718096;width:35%;border-bottom:1px solid #e2e8f0"><strong>Name</strong></td>
+        <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0">{$safe_name}</td>
+    </tr>
+    <tr>
+        <td style="padding:10px 14px;color:#718096;border-bottom:1px solid #e2e8f0"><strong>Email</strong></td>
+        <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0"><a href="mailto:{$safe_email}" style="color:{$green}">{$safe_email}</a></td>
+    </tr>
+    <tr style="background:#f7fafc">
+        <td style="padding:10px 14px;color:#718096;border-bottom:1px solid #e2e8f0"><strong>Phone</strong></td>
+        <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0">{$safe_phone}</td>
+    </tr>
+    <tr>
+        <td style="padding:10px 14px;color:#718096;border-bottom:1px solid #e2e8f0"><strong>Category</strong></td>
+        <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0">{$safe_cat}</td>
+    </tr>
+    <tr style="background:#f7fafc">
+        <td style="padding:10px 14px;color:#718096;border-bottom:1px solid #e2e8f0"><strong>Subject</strong></td>
+        <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0">{$safe_subject}</td>
+    </tr>
+    <tr>
+        <td style="padding:10px 14px;color:#718096"><strong>Received</strong></td>
+        <td style="padding:10px 14px">{$received_at}</td>
+    </tr>
+</table>
+
+<h3 style="font-size:15px;color:{$green};border-bottom:2px solid #e2e8f0;padding-bottom:8px">Message</h3>
+<div style="background:#f7fafc;border-left:4px solid {$gold};padding:16px 20px;border-radius:4px;font-size:14px;line-height:1.7;color:#2d3748">
+    {$safe_msg}
+</div>
+
+<div style="text-align:center;margin:32px 0 8px">
+    <a href="{$admin_url}" style="display:inline-block;padding:12px 28px;background:{$green};color:#ffffff;font-weight:bold;text-decoration:none;border-radius:4px;font-size:14px">
+        View in Admin Panel
+    </a>
+</div>
+<p style="font-size:12px;color:#a0aec0;text-align:center;margin-top:8px">
+    Reply directly to this email to respond to {$safe_name}.
+</p>
+HTML;
+
+            $mail_subject = ($subject ?: 'Contact Enquiry') . ' — ' . $name;
+            send_email('sales@dakari.co.ke', $mail_subject, email_layout('New Contact Message', $notify_body), '', $email);
         }
     }
 }
