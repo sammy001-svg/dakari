@@ -53,58 +53,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf()) {
         $order_id       = 0;
 
         try {
-            // ── Insert order (direct mysqli so bind_param args are visually countable) ──
-            $db   = db();
-            $stmt = $db->prepare(
+            // ── Insert order via PDO (no type string = no mismatch possible) ──
+            $pdo = new PDO(
+                'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4',
+                DB_USER, DB_PASS,
+                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+            );
+            $pdo_stmt = $pdo->prepare(
                 'INSERT INTO orders
                  (order_number, user_id, guest_email, subtotal, shipping_cost, tax, discount,
                   payment_method, payment_status, total,
                   coupon_id, coupon_code,
                   ship_name, ship_email, ship_phone, ship_address,
                   ship_city, ship_state, ship_zip, ship_country, notes)
-                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
             );
-            if (!$stmt) {
-                throw new RuntimeException('Order prepare failed: ' . $db->error);
-            }
-
-            // Assign to named variables — one per ? so mismatch is impossible
-            $v_order_number = $order_number;
-            $v_user_id      = $user['id'] ?? null;
-            $v_guest_email  = $user ? null : $data['email'];
-            $v_subtotal     = $subtotal;
-            $v_shipping     = $shipping;
-            $v_tax          = $tax;
-            $v_discount     = $discount;
-            $v_pay_method   = $data['payment_method'];
-            $v_pay_status   = $payment_status;
-            $v_total        = $total;
-            $v_coupon_id    = $applied_coupon['id']   ?? null;
-            $v_coupon_code  = $applied_coupon['code'] ?? null;
-            $v_ship_name    = $data['first_name'] . ' ' . $data['last_name'];
-            $v_ship_email   = $data['email'];
-            $v_ship_phone   = $data['phone'];
-            $v_ship_address = $data['address'];
-            $v_ship_city    = $data['city'];
-            $v_ship_state   = $data['state'];
-            $v_ship_zip     = $data['zip'];
-            $v_ship_country = $data['country'];
-            $v_notes        = $data['notes'];
-            //                s  i  s  d  d  d  d  s  s  d  i  s  s  s  s  s  s  s  s  s  s  = 21
-            $stmt->bind_param('sisddddssdisssssssss',
-                $v_order_number, $v_user_id,     $v_guest_email,
-                $v_subtotal,     $v_shipping,    $v_tax,         $v_discount,
-                $v_pay_method,   $v_pay_status,  $v_total,
-                $v_coupon_id,    $v_coupon_code,
-                $v_ship_name,    $v_ship_email,  $v_ship_phone,  $v_ship_address,
-                $v_ship_city,    $v_ship_state,  $v_ship_zip,    $v_ship_country,
-                $v_notes
-            );
-            $stmt->execute();
-            $order_id = (int) $db->insert_id;
+            $pdo_stmt->execute([
+                $order_number,
+                $user['id'] ?? null,
+                $user ? null : $data['email'],
+                $subtotal,
+                $shipping,
+                $tax,
+                $discount,
+                $data['payment_method'],
+                $payment_status,
+                $total,
+                $applied_coupon['id']   ?? null,
+                $applied_coupon['code'] ?? null,
+                $data['first_name'] . ' ' . $data['last_name'],
+                $data['email'],
+                $data['phone'],
+                $data['address'],
+                $data['city'],
+                $data['state'],
+                $data['zip'],
+                $data['country'],
+                $data['notes'],
+            ]);
+            $order_id = (int) $pdo->lastInsertId();
 
             if (!$order_id) {
-                throw new RuntimeException('Order row not created (insert_id=0).');
+                throw new RuntimeException('Order row not created (lastInsertId=0).');
             }
 
             // ── Insert order items ──
@@ -158,12 +148,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf()) {
             }
 
         } catch (Throwable $e) {
-            $db_err = '';
-            if (isset($stmt) && $stmt instanceof mysqli_stmt) $db_err = $stmt->error;
-            elseif (isset($db) && $db instanceof mysqli)      $db_err = $db->error;
-            error_log('Checkout error: ' . $e->getMessage() . ' | DB: ' . $db_err);
-            // TEMP: show real error so we can diagnose — remove after fix
-            $errors[] = '[DEBUG] ' . $e->getMessage() . ($db_err ? ' | MySQL: ' . $db_err : '');
+            error_log('Checkout order error [' . get_class($e) . ']: ' . $e->getMessage());
+            $errors[] = 'We could not place your order right now. Please try again or contact us at ' . setting('site_email', 'hello@dakari.com') . '.';
         }
     }
 
