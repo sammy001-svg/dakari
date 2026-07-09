@@ -207,7 +207,7 @@ include __DIR__ . '/includes/admin_header.php';
                 <div class="card-body">
                     <div class="form-group" style="margin-bottom:14px"><label class="form-label">Currency Symbol</label><input type="text" name="currency_symbol" class="form-control" value="<?= e($s('currency_symbol','KSh')) ?>"></div>
                     <div class="form-group" style="margin-bottom:14px"><label class="form-label">Currency Code</label><input type="text" name="currency_code" class="form-control" value="<?= e($s('currency_code','KES')) ?>"></div>
-                    <div class="form-group" style="margin-bottom:14px"><label class="form-label">Shipping Cost (0 = free for qualifying orders)</label><input type="number" name="shipping_cost" class="form-control" value="<?= e($s('shipping_cost','250')) ?>" step="0.01"></div>
+                    <div class="form-group" style="margin-bottom:14px"><label class="form-label">Shipping Cost</label><input type="number" name="shipping_cost" class="form-control" value="<?= e($s('shipping_cost','250')) ?>" step="0.01" min="0" placeholder="e.g. 250"></div>
                     <div class="form-group"><label class="form-label">Tax Rate (%)</label><input type="number" name="tax_rate" class="form-control" value="<?= e($s('tax_rate','0')) ?>" step="0.01"></div>
                 </div>
             </div>

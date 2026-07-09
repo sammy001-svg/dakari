@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf()) {
 
 $items    = get_cart_items();
 $subtotal = cart_total();
-$shipping = $subtotal > 5000 ? 0 : (float)setting('shipping_cost', '250');
+$shipping = (float)setting('shipping_cost', '250');
 $tax_rate = (float)setting('tax_rate', '0');
 
 // Coupon from session
@@ -204,8 +204,6 @@ include __DIR__ . '/includes/header.php';
                         <span id="shippingAmt">
                             <?php if ($applied_coupon && $applied_coupon['type'] === 'free_shipping'): ?>
                             <span style="color:var(--green);font-weight:600">Free <small style="text-decoration:line-through;color:var(--text-light)"><?= money((float)setting('shipping_cost','250')) ?></small></span>
-                            <?php elseif ($shipping == 0): ?>
-                            <span style="color:var(--green);font-weight:600">Free</span>
                             <?php else: ?>
                             <?= money($shipping) ?>
                             <?php endif; ?>
@@ -224,11 +222,6 @@ include __DIR__ . '/includes/header.php';
                         <strong class="summary-total" id="totalAmt"><?= money($total) ?></strong>
                     </div>
 
-                    <?php if ($subtotal < 5000 && ($applied_coupon ? $applied_coupon['type'] !== 'free_shipping' : true)): ?>
-                    <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:14px;background:var(--off-white);padding:8px 10px;border-radius:var(--radius)">
-                        Add <strong><?= money(5000 - $subtotal) ?></strong> more for free shipping!
-                    </p>
-                    <?php endif; ?>
 
                     <a href="checkout.php" class="btn btn-green btn-block btn-lg" style="margin-top:12px">Proceed to Checkout</a>
                 </div>

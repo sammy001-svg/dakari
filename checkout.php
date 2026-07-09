@@ -5,7 +5,7 @@ $items = get_cart_items();
 if (empty($items)) { header('Location: cart.php'); exit; }
 
 $subtotal = cart_total();
-$shipping = $subtotal >= (float)setting('free_shipping_threshold','5000') ? 0.0 : (float)setting('shipping_cost','250');
+$shipping = (float)setting('shipping_cost', '250');
 $tax_rate = (float)setting('tax_rate','0');
 
 $applied_coupon = session_get_coupon();
@@ -327,7 +327,7 @@ include __DIR__ . '/includes/header.php';
                         </div>
                         <div class="co-summary__line">
                             <span>Shipping</span>
-                            <span><?= $shipping == 0 ? '<span class="co-free">Free</span>' : money($shipping) ?></span>
+                            <span><?= money($shipping) ?></span>
                         </div>
                         <?php if ($discount > 0 && $applied_coupon): ?>
                         <div class="co-summary__line co-summary__line--discount">
