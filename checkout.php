@@ -158,8 +158,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf()) {
             }
 
         } catch (Throwable $e) {
-            error_log('Checkout order error: ' . $e->getMessage());
-            $errors[] = 'We could not place your order right now. Please try again or contact us at ' . setting('site_email', 'hello@dakari.com') . '.';
+            $db_err = '';
+            if (isset($stmt) && $stmt instanceof mysqli_stmt) $db_err = $stmt->error;
+            elseif (isset($db) && $db instanceof mysqli)      $db_err = $db->error;
+            error_log('Checkout error: ' . $e->getMessage() . ' | DB: ' . $db_err);
+            // TEMP: show real error so we can diagnose — remove after fix
+            $errors[] = '[DEBUG] ' . $e->getMessage() . ($db_err ? ' | MySQL: ' . $db_err : '');
         }
     }
 
