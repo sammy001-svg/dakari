@@ -29,6 +29,10 @@ if (!function_exists('query')) {
             return false;
         }
         if ($types && $params) {
+            if (strlen($types) !== count($params)) {
+                error_log('bind_param mismatch: ' . strlen($types) . ' types vs ' . count($params) . ' params | SQL: ' . $sql);
+                return false;
+            }
             $stmt->bind_param($types, ...$params);
         }
         $stmt->execute();

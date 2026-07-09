@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home2/hostanex/dakari.co.ke/
+    - /usr/bin/rsync -rlptD --exclude='.git' --exclude='config/database.php' . "$DEPLOYPATH"
