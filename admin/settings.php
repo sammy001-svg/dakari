@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && verify_csrf()) {
         'home_stat3_num','home_stat3_label',
         'home_stat4_num','home_stat4_label',
         'color_primary','color_secondary',
-        'shipping_policy','returns_policy',
+        'shipping_title','shipping_policy','returns_title','returns_policy',
     ];
     
     foreach ($allowed_keys as $key) {
@@ -216,12 +216,20 @@ include __DIR__ . '/includes/admin_header.php';
                 <div class="card-header"><span class="card-title">Shipping &amp; Returns Policy</span></div>
                 <div class="card-body">
                     <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:14px">This text appears on every product page under the "Shipping &amp; Returns" tab.</p>
+                    <div class="form-group" style="margin-bottom:8px">
+                        <label class="form-label">Shipping Section Title</label>
+                        <input type="text" name="shipping_title" class="form-control" value="<?= e($s('shipping_title', 'Shipping Information')) ?>" placeholder="e.g. Shipping Information">
+                    </div>
                     <div class="form-group" style="margin-bottom:14px">
-                        <label class="form-label">Shipping Information</label>
+                        <label class="form-label">Shipping Details</label>
                         <textarea name="shipping_policy" class="form-control" rows="4" placeholder="Describe your shipping times, regions, and costs…"><?= e($s('shipping_policy', 'Shipping is covered by the client. Standard delivery in 3–5 business days within Nairobi. Upcountry 5–7 business days. International shipping available — rates vary by destination.')) ?></textarea>
                     </div>
+                    <div class="form-group" style="margin-bottom:8px">
+                        <label class="form-label">Returns Section Title</label>
+                        <input type="text" name="returns_title" class="form-control" value="<?= e($s('returns_title', 'Returns Policy')) ?>" placeholder="e.g. Returns Policy">
+                    </div>
                     <div class="form-group">
-                        <label class="form-label">Returns Policy</label>
+                        <label class="form-label">Returns Details</label>
                         <textarea name="returns_policy" class="form-control" rows="4" placeholder="Describe your returns process and conditions…"><?= e($s('returns_policy', 'We accept returns within 14 days of delivery. Items must be unused and in original packaging. Contact us at our store email to initiate a return.')) ?></textarea>
                     </div>
                 </div>

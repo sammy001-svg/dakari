@@ -206,11 +206,13 @@ include __DIR__ . '/includes/header.php';
 
         <div id="tab-shipping" class="tab-pane" style="line-height:1.8;color:var(--text-muted);font-size:.95rem">
             <?php
-                $ship_text = setting('shipping_policy', 'Shipping is covered by the client. Standard delivery in 3–5 business days within Nairobi. Upcountry 5–7 business days. International shipping available — rates vary by destination.');
-                $ret_text  = setting('returns_policy',  'We accept returns within 14 days of delivery. Items must be unused and in original packaging. Contact us at ' . setting('site_email') . ' to initiate a return.');
+                $ship_title = setting('shipping_title', 'Shipping Information');
+                $ship_text  = setting('shipping_policy', 'Shipping is covered by the client. Standard delivery in 3–5 business days within Nairobi. Upcountry 5–7 business days. International shipping available — rates vary by destination.');
+                $ret_title  = setting('returns_title',  'Returns Policy');
+                $ret_text   = setting('returns_policy',  'We accept returns within 14 days of delivery. Items must be unused and in original packaging. Contact us at ' . setting('site_email') . ' to initiate a return.');
             ?>
-            <p><strong>Shipping:</strong> <?= nl2br(e($ship_text)) ?></p>
-            <p style="margin-top:12px"><strong>Returns:</strong> <?= nl2br(e($ret_text)) ?></p>
+            <p><strong><?= e($ship_title) ?>:</strong> <?= nl2br(e($ship_text)) ?></p>
+            <p style="margin-top:12px"><strong><?= e($ret_title) ?>:</strong> <?= nl2br(e($ret_text)) ?></p>
         </div>
 
         <!-- ── Reviews tab ─────────────────────────────────────────────────── -->
