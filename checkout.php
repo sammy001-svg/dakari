@@ -48,78 +48,122 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf()) {
     if ($data['payment_method'] === 'card')                $errors[] = 'Card payments are not yet available. Please choose M-Pesa or Cash on Delivery.';
 
     if (empty($errors)) {
-        $order_number    = generate_order_number();
-        $payment_status  = $data['payment_method'] === 'cod' ? 'pending' : 'pending';
+        $order_number   = generate_order_number();
+        $payment_status = 'pending';
+        $order_id       = 0;
 
-        query(
-            'INSERT INTO orders
-             (order_number,user_id,guest_email,subtotal,shipping_cost,tax,discount,
-              payment_method,payment_status,total,
-              coupon_id,coupon_code,
-              ship_name,ship_email,ship_phone,ship_address,ship_city,ship_state,ship_zip,ship_country,notes)
-             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-            'sisddddssdisssssssss',
-            $order_number,
-            $user['id'] ?? null,
-            $user ? null : $data['email'],
-            $subtotal, $shipping, $tax, $discount,
-            $data['payment_method'], $payment_status,
-            $total,
-            $applied_coupon['id']   ?? null,
-            $applied_coupon['code'] ?? null,
-            $data['first_name'] . ' ' . $data['last_name'],
-            $data['email'], $data['phone'],
-            $data['address'], $data['city'], $data['state'], $data['zip'], $data['country'],
-            $data['notes']
-        );
-        $order_id = lastInsertId();
-
-        foreach ($items as $item) {
-            $price  = is_on_sale($item) ? (float)$item['sale_price'] : (float)$item['price'];
-            $before = (int)(fetchOne('SELECT stock FROM products WHERE id=?','i',$item['product_id'])['stock'] ?? 0);
-            $deduct = min($item['quantity'], $before);
-            query('INSERT INTO order_items (order_id,product_id,product_name,price,quantity,subtotal) VALUES (?,?,?,?,?,?)',
-                  'iisdid', $order_id, $item['product_id'], $item['name'], $price, $item['quantity'], $price * $item['quantity']);
-            query('UPDATE products SET stock = stock - ? WHERE id = ? AND stock > 0','ii',$item['quantity'],$item['product_id']);
-            if ($deduct > 0) {
-                query('INSERT INTO stock_logs (product_id,type,quantity_change,quantity_before,quantity_after,note) VALUES (?,?,?,?,?,?)',
-                      'isiiis',$item['product_id'],'sale',-$deduct,$before,$before-$deduct,'Order #'.$order_number);
+        try {
+            // ── Insert order (direct mysqli so bind_param args are visually countable) ──
+            $db   = db();
+            $stmt = $db->prepare(
+                'INSERT INTO orders
+                 (order_number, user_id, guest_email, subtotal, shipping_cost, tax, discount,
+                  payment_method, payment_status, total,
+                  coupon_id, coupon_code,
+                  ship_name, ship_email, ship_phone, ship_address,
+                  ship_city, ship_state, ship_zip, ship_country, notes)
+                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+            );
+            if (!$stmt) {
+                throw new RuntimeException('Order prepare failed: ' . $db->error);
             }
-        }
 
-        if ($applied_coupon) {
-            query('INSERT INTO coupon_uses (coupon_id,user_id,order_id) VALUES (?,?,?)','iii',$applied_coupon['id'],$user['id']??0,$order_id);
-            query('UPDATE coupons SET uses_count=uses_count+1 WHERE id=?','i',$applied_coupon['id']);
-            session_clear_coupon();
-        }
+            // Assign to named variables — one per ? so mismatch is impossible
+            $v_order_number = $order_number;
+            $v_user_id      = $user['id'] ?? null;
+            $v_guest_email  = $user ? null : $data['email'];
+            $v_subtotal     = $subtotal;
+            $v_shipping     = $shipping;
+            $v_tax          = $tax;
+            $v_discount     = $discount;
+            $v_pay_method   = $data['payment_method'];
+            $v_pay_status   = $payment_status;
+            $v_total        = $total;
+            $v_coupon_id    = $applied_coupon['id']   ?? null;
+            $v_coupon_code  = $applied_coupon['code'] ?? null;
+            $v_ship_name    = $data['first_name'] . ' ' . $data['last_name'];
+            $v_ship_email   = $data['email'];
+            $v_ship_phone   = $data['phone'];
+            $v_ship_address = $data['address'];
+            $v_ship_city    = $data['city'];
+            $v_ship_state   = $data['state'];
+            $v_ship_zip     = $data['zip'];
+            $v_ship_country = $data['country'];
+            $v_notes        = $data['notes'];
+            //                s  i  s  d  d  d  d  s  s  d  i  s  s  s  s  s  s  s  s  s  s  = 21
+            $stmt->bind_param('sisddddssdisssssssss',
+                $v_order_number, $v_user_id,     $v_guest_email,
+                $v_subtotal,     $v_shipping,    $v_tax,         $v_discount,
+                $v_pay_method,   $v_pay_status,  $v_total,
+                $v_coupon_id,    $v_coupon_code,
+                $v_ship_name,    $v_ship_email,  $v_ship_phone,  $v_ship_address,
+                $v_ship_city,    $v_ship_state,  $v_ship_zip,    $v_ship_country,
+                $v_notes
+            );
+            $stmt->execute();
+            $order_id = (int) $db->insert_id;
 
-        if ($user) {
-            query('DELETE FROM cart WHERE user_id=?','i',$user['id']);
-        } else {
-            query('DELETE FROM cart WHERE session_id=? AND user_id IS NULL','s',session_id());
-        }
+            if (!$order_id) {
+                throw new RuntimeException('Order row not created (insert_id=0).');
+            }
 
-        // Fetch order details for automated email notifications
-        $db_order = fetchOne('SELECT * FROM orders WHERE id = ?', 'i', $order_id);
-        $db_items = fetchAll('SELECT * FROM order_items WHERE order_id = ?', 'i', $order_id);
-        if ($db_order && !empty($db_items)) {
-            // 1. Send confirmation email to customer
-            $email_subject = "Dakari Store — Order Confirmation #" . $db_order['order_number'];
-            $email_html = email_template_order_invoice($db_order, $db_items);
-            send_email($db_order['ship_email'], $email_subject, $email_html);
-            
-            // 2. Send alert email to administrator
-            $admin_email = setting('site_email', 'info@dakari.com');
-            $admin_subject = "New Order Received — #" . $db_order['order_number'];
-            $admin_html = "<h3>New Order Notification</h3>" .
-                          "<p>A new order has been placed on Dakari Store.</p>" .
-                          "<p><strong>Order Number:</strong> #" . $db_order['order_number'] . "<br>" .
-                          "<strong>Customer:</strong> " . htmlspecialchars($db_order['ship_name']) . " (" . htmlspecialchars($db_order['ship_email']) . ")<br>" .
-                          "<strong>Total Amount:</strong> " . money((float)$db_order['total']) . "<br>" .
-                          "<strong>Payment Method:</strong> " . strtoupper($db_order['payment_method']) . "</p>" .
-                          "<p><a href='" . BASE_URL . "/admin/order-detail.php?id=" . $order_id . "' style='display:inline-block; padding:10px 20px; background-color:#1B4332; color:#fff; text-decoration:none; font-weight:bold; border-radius:4px;'>View Order Details</a></p>";
-            send_email($admin_email, $admin_subject, email_layout($admin_subject, $admin_html));
+            // ── Insert order items ──
+            foreach ($items as $item) {
+                $price  = is_on_sale($item) ? (float)$item['sale_price'] : (float)$item['price'];
+                $before = (int)(fetchOne('SELECT stock FROM products WHERE id=?', 'i', $item['product_id'])['stock'] ?? 0);
+                $deduct = min($item['quantity'], $before);
+                query('INSERT INTO order_items (order_id,product_id,product_name,price,quantity,subtotal) VALUES (?,?,?,?,?,?)',
+                      'iisdid', $order_id, $item['product_id'], $item['name'], $price, $item['quantity'], $price * $item['quantity']);
+                query('UPDATE products SET stock = stock - ? WHERE id = ? AND stock > 0', 'ii', $item['quantity'], $item['product_id']);
+                if ($deduct > 0) {
+                    query('INSERT INTO stock_logs (product_id,type,quantity_change,quantity_before,quantity_after,note) VALUES (?,?,?,?,?,?)',
+                          'isiiis', $item['product_id'], 'sale', -$deduct, $before, $before - $deduct, 'Order #' . $order_number);
+                }
+            }
+
+            // ── Coupon usage ──
+            if ($applied_coupon) {
+                query('INSERT INTO coupon_uses (coupon_id,user_id,order_id) VALUES (?,?,?)', 'iii',
+                      $applied_coupon['id'], $user['id'] ?? 0, $order_id);
+                query('UPDATE coupons SET uses_count=uses_count+1 WHERE id=?', 'i', $applied_coupon['id']);
+                session_clear_coupon();
+            }
+
+            // ── Clear cart ──
+            if ($user) {
+                query('DELETE FROM cart WHERE user_id=?', 'i', $user['id']);
+            } else {
+                query('DELETE FROM cart WHERE session_id=? AND user_id IS NULL', 's', session_id());
+            }
+
+            // ── Order confirmation emails ──
+            $db_order = fetchOne('SELECT * FROM orders WHERE id = ?', 'i', $order_id);
+            $db_items = fetchAll('SELECT * FROM order_items WHERE order_id = ?', 'i', $order_id);
+            if ($db_order && !empty($db_items)) {
+                $email_subject = 'Dakari Store — Order Confirmation #' . $db_order['order_number'];
+                send_email($db_order['ship_email'], $email_subject, email_template_order_invoice($db_order, $db_items));
+
+                $admin_email   = setting('site_email', 'info@dakari.com');
+                $admin_subject = 'New Order Received — #' . $db_order['order_number'];
+                $admin_html    = '<h3>New Order Notification</h3>'
+                    . '<p>A new order has been placed on Dakari Store.</p>'
+                    . '<p><strong>Order Number:</strong> #' . $db_order['order_number'] . '<br>'
+                    . '<strong>Customer:</strong> ' . htmlspecialchars($db_order['ship_name'])
+                    . ' (' . htmlspecialchars($db_order['ship_email']) . ')<br>'
+                    . '<strong>Total Amount:</strong> ' . money((float)$db_order['total']) . '<br>'
+                    . '<strong>Payment Method:</strong> ' . strtoupper($db_order['payment_method']) . '</p>'
+                    . '<p><a href="' . BASE_URL . '/admin/order-detail.php?id=' . $order_id
+                    . '" style="display:inline-block;padding:10px 20px;background:#1B4332;color:#fff;text-decoration:none;font-weight:bold;border-radius:4px">View Order</a></p>';
+                send_email($admin_email, $admin_subject, email_layout($admin_subject, $admin_html));
+            }
+
+        } catch (Throwable $e) {
+            error_log('Checkout order error: ' . $e->getMessage());
+            $errors[] = 'We could not place your order right now. Please try again or contact us at ' . setting('site_email', 'hello@dakari.com') . '.';
         }
+    }
+
+    if (empty($errors) && $order_id > 0) {
 
         if ($data['payment_method'] === 'mpesa') {
             header('Location: payment.php?order=' . urlencode($order_number));
