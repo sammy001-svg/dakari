@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && verify_csrf()) {
         'home_stat3_num','home_stat3_label',
         'home_stat4_num','home_stat4_label',
         'color_primary','color_secondary',
-        'shipping_title','shipping_policy','returns_title','returns_policy',
+        'shipping_tab_title','shipping_title','shipping_policy','returns_title','returns_policy',
     ];
     
     foreach ($allowed_keys as $key) {
@@ -216,6 +216,11 @@ include __DIR__ . '/includes/admin_header.php';
                 <div class="card-header"><span class="card-title">Shipping &amp; Returns Policy</span></div>
                 <div class="card-body">
                     <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:14px">This text appears on every product page under the "Shipping &amp; Returns" tab.</p>
+                    <div class="form-group" style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)">
+                        <label class="form-label">Tab Label</label>
+                        <input type="text" name="shipping_tab_title" class="form-control" value="<?= e($s('shipping_tab_title', 'Shipping & Returns')) ?>" placeholder="e.g. Shipping &amp; Returns">
+                        <p class="form-hint" style="margin-top:4px">The tab name shown on the product page.</p>
+                    </div>
                     <div class="form-group" style="margin-bottom:8px">
                         <label class="form-label">Shipping Section Title</label>
                         <input type="text" name="shipping_title" class="form-control" value="<?= e($s('shipping_title', 'Shipping Information')) ?>" placeholder="e.g. Shipping Information">

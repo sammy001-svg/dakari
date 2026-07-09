@@ -191,7 +191,7 @@ include __DIR__ . '/includes/header.php';
     <div class="tabs-wrapper" id="reviews" style="margin-top:48px;margin-bottom:56px">
         <div class="tabs">
             <button class="tab-btn active" data-tab="tab-desc">Description</button>
-            <button class="tab-btn" data-tab="tab-shipping">Shipping &amp; Returns</button>
+            <button class="tab-btn" data-tab="tab-shipping"><?= e(setting('shipping_tab_title', 'Shipping & Returns')) ?></button>
             <button class="tab-btn" data-tab="tab-reviews">
                 Reviews
                 <?php if ($review_summary['total'] > 0): ?>
