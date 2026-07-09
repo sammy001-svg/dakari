@@ -329,6 +329,9 @@ include __DIR__ . '/includes/header.php';
                             <span>Shipping</span>
                             <span><?= money($shipping) ?></span>
                         </div>
+                        <p style="font-size:.72rem;color:var(--text-muted);margin:-4px 0 8px;line-height:1.5">
+                            Shipping is client covered. Costs adjusted for regional &amp; international destinations.
+                        </p>
                         <?php if ($discount > 0 && $applied_coupon): ?>
                         <div class="co-summary__line co-summary__line--discount">
                             <span>

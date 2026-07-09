@@ -209,6 +209,9 @@ include __DIR__ . '/includes/header.php';
                             <?php endif; ?>
                         </span>
                     </div>
+                    <p style="font-size:.75rem;color:var(--text-muted);margin:-6px 0 10px;line-height:1.5">
+                        Shipping is client covered. Costs are adjusted based on regional and international destinations.
+                    </p>
 
                     <?php if ($tax > 0): ?>
                     <div class="summary-row">
