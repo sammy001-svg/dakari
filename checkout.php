@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf()) {
               coupon_id,coupon_code,
               ship_name,ship_email,ship_phone,ship_address,ship_city,ship_state,ship_zip,ship_country,notes)
              VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-            'siiddddssdissssssss',
+            'sisddddssdisssssssss',
             $order_number,
             $user['id'] ?? null,
             $user ? null : $data['email'],
