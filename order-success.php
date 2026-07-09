@@ -31,6 +31,9 @@ include __DIR__ . '/includes/header.php';
             <?php if ($order['payment_status'] === 'paid'): ?>
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
             M-Pesa payment confirmed · Code: <strong><?= e($order['mpesa_code'] ?? '') ?></strong>
+            <?php elseif (!empty($order['mpesa_code'])): ?>
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            M-Pesa code received · Awaiting verification · Code: <strong><?= e($order['mpesa_code']) ?></strong>
             <?php else: ?>
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             M-Pesa payment pending · <a href="<?= BASE_URL ?>/payment.php?order=<?= urlencode($order['order_number']) ?>" style="color:inherit;font-weight:700;text-decoration:underline">Complete payment →</a>

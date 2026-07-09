@@ -40,12 +40,15 @@ include __DIR__ . '/includes/admin_header.php';
     </div>
     <div class="table-responsive">
         <table class="data-table">
-            <thead><tr><th>Order #</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th><th></th></tr></thead>
+            <thead><tr><th>Order #</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th></th></tr></thead>
             <tbody>
             <?php foreach ($orders as $o):
                 $items_count = fetchOne('SELECT SUM(quantity) as n FROM order_items WHERE order_id=?','i',$o['id'])['n']??0;
+                $needs_approval = $o['payment_method'] === 'mpesa'
+                               && ($o['payment_status'] ?? 'pending') === 'pending'
+                               && !empty($o['mpesa_code']);
             ?>
-            <tr>
+            <tr <?= $needs_approval ? 'style="background:rgba(201,168,76,.07)"' : '' ?>>
                 <td><strong><?= e($o['order_number']) ?></strong></td>
                 <td>
                     <p style="font-size:.88rem;font-weight:600"><?= e($o['ship_name']) ?></p>
@@ -53,6 +56,25 @@ include __DIR__ . '/includes/admin_header.php';
                 </td>
                 <td><?= $items_count ?></td>
                 <td><strong><?= money((float)$o['total']) ?></strong></td>
+                <td>
+                    <?php if ($o['payment_method'] === 'mpesa'): ?>
+                        <?php if (($o['payment_status'] ?? '') === 'paid'): ?>
+                        <span style="display:inline-flex;align-items:center;gap:4px;font-size:.75rem;font-weight:600;color:var(--green);background:rgba(27,67,50,.08);padding:2px 8px;border-radius:20px">
+                            <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                            M-Pesa
+                        </span>
+                        <?php elseif ($needs_approval): ?>
+                        <span style="display:inline-flex;align-items:center;gap:4px;font-size:.75rem;font-weight:700;color:#92400e;background:rgba(201,168,76,.18);padding:2px 8px;border-radius:20px">
+                            <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            Verify Code
+                        </span>
+                        <?php else: ?>
+                        <span style="font-size:.75rem;color:var(--text-muted)">M-Pesa</span>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        <span style="font-size:.75rem;color:var(--text-muted);text-transform:uppercase"><?= e($o['payment_method'] ?? 'cod') ?></span>
+                    <?php endif; ?>
+                </td>
                 <td><span class="status-badge status-<?= e($o['status']) ?>"><?= ucfirst(e($o['status'])) ?></span></td>
                 <td style="font-size:.82rem;color:var(--text-muted)"><?= date('M j, Y', strtotime($o['created_at'])) ?></td>
                 <td><a href="order-detail.php?id=<?= $o['id'] ?>" class="btn btn-sm btn-outline">View</a></td>

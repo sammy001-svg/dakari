@@ -18,32 +18,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf()) {
     if (strlen($code) < 8) {
         $errors[] = 'Please enter a valid M-Pesa transaction code (e.g. QGH7X2Y3T1).';
     } else {
-        query("UPDATE orders SET payment_status='paid', mpesa_code=? WHERE id=?",'si',$code,$order['id']);
-        
-        // Fetch fresh order details including the updated payment status and name
-        $db_order = fetchOne("SELECT * FROM orders WHERE id = ?",'i',$order['id']);
+        // Save the code but keep payment_status='pending' — admin must verify before approving
+        query("UPDATE orders SET mpesa_code=? WHERE id=?", 'si', $code, $order['id']);
+
+        $db_order = fetchOne("SELECT * FROM orders WHERE id = ?", 'i', $order['id']);
         if ($db_order) {
-            // 1. Send payment receipt confirmation to customer
-            $cust_subject = "Payment Confirmed for Order #" . $db_order['order_number'];
-            $cust_html = "<h3>Payment Confirmation</h3>" .
+            // 1. Tell customer their code was received and is under review
+            $cust_subject = "M-Pesa Code Received — Order #" . $db_order['order_number'];
+            $cust_html = "<h3>Payment Code Received</h3>" .
                          "<p>Dear " . htmlspecialchars($db_order['ship_name']) . ",</p>" .
-                         "<p>We have successfully verified your payment of <strong>" . money((float)$db_order['total']) . "</strong> via M-Pesa (Transaction Code: <strong>$code</strong>) for order <strong>#" . $db_order['order_number'] . "</strong>.</p>" .
-                         "<p>Your order is now being processed and prepared for delivery. We will notify you once it has been shipped.</p>" .
-                         "<p><a href='" . BASE_URL . "/client/orders.php' style='display:inline-block; padding:10px 20px; background-color:#1B4332; color:#fff; text-decoration:none; font-weight:bold; border-radius:4px;'>View Order Status</a></p>";
+                         "<p>We have received your M-Pesa transaction code <strong>" . htmlspecialchars($code) . "</strong> for order <strong>#" . $db_order['order_number'] . "</strong> (" . money((float)$db_order['total']) . ").</p>" .
+                         "<p>Our team will verify your payment shortly and your order will be processed once confirmed. You will receive another email when payment is approved.</p>" .
+                         "<p><a href='" . BASE_URL . "/client/orders.php' style='display:inline-block;padding:10px 20px;background-color:#1B4332;color:#fff;text-decoration:none;font-weight:bold;border-radius:4px;'>View Order Status</a></p>";
             send_email($db_order['ship_email'], $cust_subject, email_layout($cust_subject, $cust_html));
-            
-            // 2. Send payment alert to administrator
-            $admin_email = setting('site_email', 'info@dakari.com');
-            $admin_subject = "Payment Received — Order #" . $db_order['order_number'];
-            $admin_html = "<h3>Payment Alert</h3>" .
-                          "<p>M-Pesa payment has been confirmed for order <strong>#" . $db_order['order_number'] . "</strong>.</p>" .
-                          "<p><strong>Transaction Code:</strong> $code<br>" .
-                          "<strong>Amount Paid:</strong> " . money((float)$db_order['total']) . "<br>" .
-                          "<strong>Customer:</strong> " . htmlspecialchars($db_order['ship_name']) . " (" . htmlspecialchars($db_order['ship_email']) . ")</p>" .
-                          "<p><a href='" . BASE_URL . "/admin/order-detail.php?id=" . $db_order['id'] . "' style='display:inline-block; padding:10px 20px; background-color:#1B4332; color:#fff; text-decoration:none; font-weight:bold; border-radius:4px;'>View Order Details</a></p>";
+
+            // 2. Alert admin — show the code prominently for quick verification
+            $admin_email   = setting('site_email', 'info@dakari.com');
+            $admin_subject = "M-Pesa Code Submitted — Verify Order #" . $db_order['order_number'];
+            $admin_html    = "<h3>M-Pesa Payment Awaiting Verification</h3>" .
+                             "<p>A customer has submitted an M-Pesa transaction code for order <strong>#" . $db_order['order_number'] . "</strong>. Please verify and approve.</p>" .
+                             "<table style='border-collapse:collapse;width:100%;margin:16px 0'>" .
+                             "<tr><td style='padding:8px 12px;border:1px solid #ddd;font-weight:600;background:#f9f9f9'>Transaction Code</td><td style='padding:8px 12px;border:1px solid #ddd;font-size:1.2em;font-weight:700;letter-spacing:.06em;color:#1B4332'>" . htmlspecialchars($code) . "</td></tr>" .
+                             "<tr><td style='padding:8px 12px;border:1px solid #ddd;font-weight:600;background:#f9f9f9'>Order Number</td><td style='padding:8px 12px;border:1px solid #ddd'>#" . $db_order['order_number'] . "</td></tr>" .
+                             "<tr><td style='padding:8px 12px;border:1px solid #ddd;font-weight:600;background:#f9f9f9'>Amount</td><td style='padding:8px 12px;border:1px solid #ddd'>" . money((float)$db_order['total']) . "</td></tr>" .
+                             "<tr><td style='padding:8px 12px;border:1px solid #ddd;font-weight:600;background:#f9f9f9'>Customer</td><td style='padding:8px 12px;border:1px solid #ddd'>" . htmlspecialchars($db_order['ship_name']) . " (" . htmlspecialchars($db_order['ship_email']) . ")</td></tr>" .
+                             "</table>" .
+                             "<p><a href='" . BASE_URL . "/admin/order-detail.php?id=" . $db_order['id'] . "' style='display:inline-block;padding:12px 24px;background-color:#1B4332;color:#fff;text-decoration:none;font-weight:bold;border-radius:4px;font-size:1em'>Approve Payment →</a></p>";
             send_email($admin_email, $admin_subject, email_layout($admin_subject, $admin_html));
         }
-        
+
         header('Location: order-success.php?order=' . urlencode($order_num)); exit;
     }
 }
